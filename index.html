@@ -136,10 +136,12 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 .status{font-size:11px;padding:5px 9px;border-radius:999px;background:#eaf6ee;color:#2d6f46;white-space:nowrap}
 .status.warn{background:#fff1d5;color:#8a6100}
 .stage{
-  flex:1;overflow:auto;display:grid;place-items:start center;padding:35px 35px 60px;
+  flex:1;overflow:auto;display:flex;justify-content:flex-start;align-items:center;flex-direction:column;
+  padding:35px 35px 60px;
   background:radial-gradient(circle at 20% 10%,rgba(255,255,255,.85),transparent 32%),#e8edf1
 }
-.shell{position:relative;width:calc(var(--page-w)*var(--scale));height:calc(var(--page-h)*var(--scale))}
+.stage-stack{display:flex;flex-direction:column;align-items:stretch;gap:18px;max-width:100%}
+.shell{position:relative;width:calc(var(--page-w)*var(--scale));height:calc(var(--page-h)*var(--scale));flex:0 0 auto}
 .page{
   position:absolute;left:0;top:0;width:var(--page-w);height:var(--page-h);
   transform:scale(var(--scale));transform-origin:top left;background:#fff;overflow:hidden;
@@ -181,7 +183,32 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
   margin-top:21px;font-size:var(--footer-size,19px);font-weight:550;line-height:1.5;
   opacity:.74;white-space:pre-line;word-break:keep-all;text-align:var(--body-align,left)
 }
+.title-group,.body-group{position:relative}
+.title-group{transform:translateY(var(--title-shift,0px))}
+.body-group{transform:translateY(var(--body-shift,0px))}
 .empty:empty{display:none}
+
+.photo-fit-box{overflow:hidden;background:rgba(255,255,255,.12)}
+.photo-fit-box img{width:100%!important;height:100%!important}
+
+.patch-panel{
+  background:rgba(255,255,255,.96);border:1px solid #d7e0e7;border-radius:12px;
+  box-shadow:0 8px 24px rgba(39,55,70,.10);padding:15px 16px 14px;color:#35424f
+}
+.patch-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.patch-head strong{font-size:13px;color:#1e2b37}
+.patch-current{font-size:10.5px;color:#54728b;background:#eef5fa;border-radius:999px;padding:4px 7px}
+.patch-panel ul{margin:7px 0 0;padding-left:18px;font-size:11px;line-height:1.65}
+.patch-panel details{border-top:1px solid #edf0f2;margin-top:10px;padding-top:9px}
+.patch-panel summary{cursor:pointer;font-size:11px;font-weight:750;color:#4c6071}
+.patch-version{margin-top:9px;font-size:10.5px;line-height:1.6;color:#65717d}
+.feedback-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.feedback-actions a,.feedback-actions button{
+  display:flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid var(--line);
+  border-radius:9px;padding:10px 8px;background:#fff;color:#334556;font-size:11.5px;font-weight:750
+}
+.feedback-actions a:hover,.feedback-actions button:hover{border-color:#94aec4;color:var(--blue)}
+.hidden-file{display:none}
 
 .obj{
   position:absolute;left:50%;top:50%;width:20%;transform:translate(-50%,-50%);
@@ -227,11 +254,11 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <aside class="sidebar">
   <div class="header">
     <h1>안내문 제작기</h1>
-    <span class="badge">V1.3</span>
+    <span class="badge">V1.4</span>
   </div>
   <p class="desc">
     GitHub 루트의 chars / logos / templates 구조를 그대로 사용해.
-    가로 12종·세로 2종 템플릿, 흰색 로고, 로고 위치 프리셋과 잠금 기능을 추가했어.
+    V1.4에서는 작업파일 저장·불러오기, 출력 파일명, 피드백 메일, 사진 맞춤, 텍스트 대비 경고까지 추가했어.
   </p>
 
   <section class="section">
@@ -317,6 +344,8 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     <div class="range"><span>본문 행간</span><input id="bodyLine" type="range" min="120" max="210" value="162"><output id="bodyLineO">1.62</output></div>
     <div class="range"><span>내용 위치</span><input id="contentTop" type="range" min="8" max="70" value="24"><output id="contentTopO">24%</output></div>
     <div class="range"><span>내용 폭</span><input id="contentWidth" type="range" min="35" max="92" value="76"><output id="contentWidthO">76%</output></div>
+    <div class="range"><span>제목 미세위치</span><input id="titleShift" type="range" min="-160" max="160" value="0"><output id="titleShiftO">0px</output></div>
+    <div class="range"><span>본문 미세위치</span><input id="bodyShift" type="range" min="-160" max="160" value="0"><output id="bodyShiftO">0px</output></div>
 
     <div class="field" style="margin-top:11px">
       <label><strong>글자색</strong></label>
@@ -410,6 +439,15 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
       <input class="control" id="photo" type="file" accept="image/png,image/jpeg,image/webp">
     </div>
 
+    <div class="field">
+      <label><strong>사진 맞춤</strong></label>
+      <select id="photoFit">
+        <option value="original">원본 비율 유지</option>
+        <option value="contain">영역 맞추기</option>
+        <option value="cover">영역 채우기</option>
+      </select>
+    </div>
+
     <div class="object-tabs" id="objTabs">
       <button type="button" data-obj="logo" class="active">로고</button>
       <button type="button" data-obj="watermark">워터마크</button>
@@ -435,13 +473,34 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
   </section>
 
   <section class="section">
-    <h2>5. 저장</h2>
-    <p class="note">PNG는 A4 300dpi 상당 크기, PDF는 실제 A4 규격으로 저장돼.</p>
+    <h2>5. 저장 · 불러오기</h2>
+    <p class="note">PNG는 A4 300dpi 상당 크기, PDF는 실제 A4 규격으로 저장돼. 작업파일은 서버가 아니라 내 컴퓨터에 JSON으로 저장돼.</p>
+
+    <div class="field">
+      <label><strong>출력 파일명</strong></label>
+      <input type="text" id="outputName" value="안내문" placeholder="예: 회의실 이용 제한 안내">
+    </div>
+
     <div class="btns">
       <button class="btn primary" type="button" id="png">PNG 저장</button>
       <button class="btn primary" type="button" id="pdf">PDF 저장</button>
-      <button class="btn secondary" type="button" id="save">현재 설정 저장</button>
+      <button class="btn secondary" type="button" id="workSave">작업파일 저장</button>
+      <button class="btn secondary" type="button" id="workLoad">작업파일 불러오기</button>
+    </div>
+    <input class="hidden-file" id="workFile" type="file" accept="application/json,.json,.notice">
+
+    <div class="btns" style="margin-top:7px">
+      <button class="btn secondary" type="button" id="save">브라우저 저장</button>
       <button class="btn danger" type="button" id="reset">전체 초기화</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>6. 피드백</h2>
+    <p class="note">GitHub 없이 메일로만 오류나 개선 의견을 받을 수 있게 해뒀어.</p>
+    <div class="feedback-actions">
+      <a href="#" id="feedbackMail">✉ 피드백 메일 보내기</a>
+      <button type="button" id="copyMail">메일 주소 복사</button>
     </div>
   </section>
 
@@ -469,6 +528,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
   </div>
 
   <div class="stage" id="stage">
+    <div class="stage-stack" id="stageStack">
     <div class="shell" id="shell">
       <div class="page" id="page">
         <img class="template-bg" id="templateBg" alt="">
@@ -481,17 +541,44 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
         <div class="obj" id="watermarkObj" data-name="watermark"><img id="watermarkImg" alt=""></div>
 
         <div class="content" id="content">
-          <h2 class="title empty" id="pTitle"></h2>
-          <div class="subtitle empty" id="pSubtitle"></div>
-          <div class="body empty" id="pBody"></div>
-          <div class="emphasis empty" id="pEmphasis"></div>
-          <div class="footer empty" id="pFooter"></div>
+          <div class="title-group" id="titleGroup">
+            <h2 class="title empty" id="pTitle"></h2>
+            <div class="subtitle empty" id="pSubtitle"></div>
+          </div>
+          <div class="body-group" id="bodyGroup">
+            <div class="body empty" id="pBody"></div>
+            <div class="emphasis empty" id="pEmphasis"></div>
+            <div class="footer empty" id="pFooter"></div>
+          </div>
         </div>
 
         <div class="obj selected" id="logoObj" data-name="logo"><img id="logoImg" alt=""></div>
         <div class="obj" id="characterObj" data-name="character"><img id="characterImg" alt=""></div>
         <div class="obj" id="photoObj" data-name="photo"><img id="photoImg" alt=""></div>
       </div>
+    </div>
+
+    <section class="patch-panel" id="patchPanel">
+      <div class="patch-head">
+        <strong>안내문 제작기 업데이트</strong>
+        <span class="patch-current">V1.4 · 2026.08.25</span>
+      </div>
+      <ul>
+        <li>피드백 메일 전송 및 메일 주소 복사 기능 추가</li>
+        <li>PNG/PDF 출력 파일명 직접 지정 기능 추가</li>
+        <li>작업파일(JSON) 저장·불러오기 추가</li>
+        <li>제목·본문 위치를 각각 미세조정할 수 있도록 개선</li>
+        <li>사진 맞춤: 원본 비율 / 영역 맞추기 / 영역 채우기 추가</li>
+        <li>텍스트와 템플릿 배경의 대비가 낮으면 경고 표시</li>
+      </ul>
+      <details>
+        <summary>이전 업데이트 보기</summary>
+        <div class="patch-version"><strong>V1.3 · 2026.08.25</strong><br>가로 12종·세로 2종 템플릿, 흰색 로고, 로고 6개 위치 프리셋, 캐릭터 썸네일, 요소 잠금, 줄바꿈 오류 수정.</div>
+        <div class="patch-version"><strong>V1.2 · 2026.08.25</strong><br>GitHub 루트의 chars / logos / templates 구조에 맞춰 에셋 경로 개편.</div>
+        <div class="patch-version"><strong>V1.1 · 2026.08.25</strong><br>메일명함 제작기 캐릭터 자산 재사용 및 이미지 템플릿 방식 도입.</div>
+        <div class="patch-version"><strong>V1.0</strong><br>A4 가로·세로, 텍스트 편집, 로고·캐릭터·사진 배치, PNG/PDF 출력 기본 기능 구현.</div>
+      </details>
+    </section>
     </div>
   </div>
 </main>
@@ -600,6 +687,8 @@ const freshState=()=>({
   bodyLine:1.62,
   contentTop:24,
   contentWidth:76,
+  titleShift:0,
+  bodyShift:0,
   textColor:"#1F2937",
   accent:"#0E4A84",
 
@@ -611,6 +700,8 @@ const freshState=()=>({
   charCategory:"none",
   charIndex:1,
   photoData:"",
+  photoFit:"original",
+  outputName:"안내문",
 
   selected:"logo",
   safe:false,
@@ -625,6 +716,7 @@ let saveTimer=null;
 
 const page=$("page");
 const stage=$("stage");
+const stageStack=$("stageStack");
 const shell=$("shell");
 const templateBg=$("templateBg");
 
@@ -678,14 +770,15 @@ function saveSoon(){
     try{
       const copy=deepCopy(state);
       copy.photoData="";
-      localStorage.setItem("noticeMakerV13",JSON.stringify(copy));
+      localStorage.setItem("noticeMakerV14",JSON.stringify(copy));
     }catch(e){}
   },160);
 }
 
 function loadSaved(){
   try{
-    const x=JSON.parse(localStorage.getItem("noticeMakerV13")||"null");
+    const savedRaw=localStorage.getItem("noticeMakerV14")||localStorage.getItem("noticeMakerV13")||"null";
+    const x=JSON.parse(savedRaw);
     if(!x)return;
 
     const b=freshState();
@@ -872,6 +965,29 @@ function renderAssets(){
   );
 
   setAsset("photo",state.photoData,state.photoData?"사진":"");
+  renderPhotoFit();
+}
+
+function renderPhotoFit(){
+  const obj=objs.photo;
+  const img=imgs.photo;
+  const mode=state.photoFit||"original";
+
+  obj.classList.toggle("photo-fit-box",mode!=="original");
+
+  if(mode==="original"){
+    obj.style.aspectRatio="auto";
+    obj.style.overflow="visible";
+    img.style.width="100%";
+    img.style.height="auto";
+    img.style.objectFit="contain";
+  }else{
+    obj.style.aspectRatio="4 / 3";
+    obj.style.overflow="hidden";
+    img.style.width="100%";
+    img.style.height="100%";
+    img.style.objectFit=mode==="cover"?"cover":"contain";
+  }
 }
 
 function renderTemplate(){
@@ -913,6 +1029,8 @@ function renderContent(){
   page.style.setProperty("--body-line",state.bodyLine);
   page.style.setProperty("--content-top",state.contentTop+"%");
   page.style.setProperty("--content-width",state.contentWidth+"%");
+  page.style.setProperty("--title-shift",state.titleShift+"px");
+  page.style.setProperty("--body-shift",state.bodyShift+"px");
   page.style.setProperty("--title-align",state.titleAlign);
   page.style.setProperty("--body-align",state.bodyAlign);
   page.style.setProperty("--text-color",state.textColor);
@@ -963,13 +1081,49 @@ function fit(){
   s=Math.max(.24,s);
 
   document.documentElement.style.setProperty("--scale",s.toFixed(4));
-  shell.style.width=(p.w*s)+"px";
+  const visualW=(p.w*s);
+  shell.style.width=visualW+"px";
   shell.style.height=(p.h*s)+"px";
+  stageStack.style.width=visualW+"px";
+}
+
+function templateContentBackground(){
+  const name=currentTemplateMeta().name;
+  if(["Dark Lion","Dark Seal","Dark Gold"].includes(name))return "#12395E";
+  return "#FFFFFF";
+}
+
+function rgbFromHex(hex){
+  const v=(hex||"").replace("#","");
+  if(v.length!==6)return null;
+  return [0,2,4].map(i=>parseInt(v.slice(i,i+2),16));
+}
+
+function relativeLuminance(hex){
+  const rgb=rgbFromHex(hex);
+  if(!rgb)return 1;
+  const c=rgb.map(v=>{
+    const s=v/255;
+    return s<=0.03928?s/12.92:Math.pow((s+0.055)/1.055,2.4);
+  });
+  return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];
+}
+
+function contrastRatio(a,b){
+  const l1=relativeLuminance(a);
+  const l2=relativeLuminance(b);
+  const hi=Math.max(l1,l2);
+  const lo=Math.min(l1,l2);
+  return (hi+0.05)/(lo+0.05);
+}
+
+function hasLowContrast(){
+  return contrastRatio(state.textColor,templateContentBackground())<4.5;
 }
 
 function check(){
   const st=$("status");
-  const c=$("content").getBoundingClientRect();
+  const c=$("bodyGroup").getBoundingClientRect();
   const p=page.getBoundingClientRect();
   const t=$("pTitle");
   const lh=parseFloat(getComputedStyle(t).lineHeight)||state.titleSize*1.18;
@@ -978,6 +1132,9 @@ function check(){
   if(!templateReady){
     st.className="status warn";
     st.textContent="템플릿 파일 없음";
+  }else if(hasLowContrast()){
+    st.className="status warn";
+    st.textContent="글자 대비 낮음 · 글자색 변경 권장";
   }else if(titleLong){
     st.className="status warn";
     st.textContent="제목이 김 · 2줄 권장";
@@ -1129,6 +1286,8 @@ function renderUI(){
   $("bodyLine").value=Math.round(state.bodyLine*100);
   $("contentTop").value=state.contentTop;
   $("contentWidth").value=state.contentWidth;
+  $("titleShift").value=state.titleShift;
+  $("bodyShift").value=state.bodyShift;
 
   $("titleSizeO").value=state.titleSize;
   $("subtitleSizeO").value=state.subtitleSize;
@@ -1136,6 +1295,12 @@ function renderUI(){
   $("bodyLineO").value=state.bodyLine.toFixed(2);
   $("contentTopO").value=state.contentTop+"%";
   $("contentWidthO").value=state.contentWidth+"%";
+  $("titleShiftO").value=state.titleShift+"px";
+  $("bodyShiftO").value=state.bodyShift+"px";
+
+  $("outputName").value=state.outputName||"안내문";
+  $("photoFit").value=state.photoFit||"original";
+  $("photoFit").disabled=!state.photoData;
 
   $("logoType").value=state.logoType;
   $("logoColor").value=state.logoColor;
@@ -1255,6 +1420,70 @@ function assetMissing(){
   return false;
 }
 
+function safeOutputName(){
+  const raw=(state.outputName||"안내문").trim()||"안내문";
+  return raw.replace(/[\\/:*?"<>|]/g,"_").replace(/\s+/g," ").slice(0,100);
+}
+
+function downloadBlob(blob,filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function mergeImportedState(incoming){
+  const b=freshState();
+  const x=incoming&&incoming.state?incoming.state:incoming;
+  if(!x||typeof x!=="object")throw new Error("invalid state");
+
+  const orientation=x.orientation in PAGE?x.orientation:b.orientation;
+  const merged={...b,...x,orientation};
+  const baseObjects=deepCopy(OBJ_DEFAULTS[orientation]);
+  merged.objects={...baseObjects,...(x.objects||{})};
+  for(const k of Object.keys(baseObjects)){
+    merged.objects[k]={...baseObjects[k],...(x.objects?.[k]||{})};
+  }
+  const list=TEMPLATES[orientation];
+  if(!list.some(t=>t.id===merged.template))merged.template=list[0].id;
+  return merged;
+}
+
+function exportWorkFile(){
+  const payload={
+    app:"notice-maker",
+    version:"1.4",
+    savedAt:new Date().toISOString(),
+    state:state
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+  downloadBlob(blob,safeOutputName()+".notice.json");
+}
+
+function importWorkFile(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const parsed=JSON.parse(String(r.result||""));
+      state=mergeImportedState(parsed);
+      $("photo").value="";
+      render(true);
+      alert("작업파일을 불러왔어.");
+    }catch(e){
+      console.error(e);
+      alert("안내문 제작기 작업파일을 읽지 못했어.");
+    }finally{
+      $("workFile").value="";
+    }
+  };
+  r.readAsText(file,"utf-8");
+}
+
 async function makeCanvas(){
   if(!templateReady){
     alert("선택한 템플릿 이미지가 아직 없어.");
@@ -1291,7 +1520,7 @@ async function exportPNG(){
 
     const a=document.createElement("a");
     a.href=c.toDataURL("image/png");
-    a.download="안내문.png";
+    a.download=safeOutputName()+".png";
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -1327,7 +1556,7 @@ async function exportPDF(){
     const h=landscape?210:297;
 
     pdf.addImage(c.toDataURL("image/png"),"PNG",0,0,w,h,undefined,"FAST");
-    pdf.save("안내문.pdf");
+    pdf.save(safeOutputName()+".pdf");
   }catch(e){
     console.error(e);
     alert("PDF 생성 중 오류가 났어.");
@@ -1404,6 +1633,8 @@ $("bodyLine").oninput=e=>{
 
 typRange("contentTop","contentTop","contentTopO",v=>v+"%");
 typRange("contentWidth","contentWidth","contentWidthO",v=>v+"%");
+typRange("titleShift","titleShift","titleShiftO",v=>v+"px");
+typRange("bodyShift","bodyShift","bodyShiftO",v=>v+"px");
 
 bindColor("textColor","textColorT","textColor");
 bindColor("accent","accentT","accent");
@@ -1463,6 +1694,17 @@ $("photo").onchange=e=>{
     render(true);
   };
   r.readAsDataURL(f);
+};
+
+$("photoFit").onchange=e=>{
+  state.photoFit=e.target.value;
+  renderPhotoFit();
+  saveSoon();
+};
+
+$("outputName").oninput=e=>{
+  state.outputName=e.target.value;
+  saveSoon();
 };
 
 document.querySelectorAll("#objTabs [data-obj]").forEach(b=>{
@@ -1559,7 +1801,10 @@ $("objReset").onclick=resetObject;
 
 $("removePhoto").onclick=()=>{
   state.photoData="";
+  state.photoFit="original";
   $("photo").value="";
+  $("photoFit").value="original";
+  $("photoFit").disabled=true;
   renderAssets();
   if(state.selected==="photo")selectObject("logo");
   saveSoon();
@@ -1574,6 +1819,38 @@ Object.values(objs).forEach(el=>{
 
 $("png").onclick=exportPNG;
 $("pdf").onclick=exportPDF;
+$("workSave").onclick=exportWorkFile;
+$("workLoad").onclick=()=>$("workFile").click();
+$("workFile").onchange=e=>importWorkFile(e.target.files?.[0]);
+
+const FEEDBACK_EMAIL="keun0810@hanyang.ac.kr";
+$("feedbackMail").onclick=e=>{
+  e.preventDefault();
+  const subject="[안내문 제작기 피드백]";
+  const body=[
+    "안내문 제작기 V1.4 피드백입니다.",
+    "",
+    "[구분]",
+    "오류 / 개선 제안 / 기타",
+    "",
+    "[내용]",
+    "",
+    "",
+    "[사용 환경]",
+    `브라우저: ${navigator.userAgent}`,
+    `페이지: ${location.href}`
+  ].join("\n");
+  location.href=`mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+
+$("copyMail").onclick=async()=>{
+  try{
+    await navigator.clipboard.writeText(FEEDBACK_EMAIL);
+    alert("피드백 메일 주소를 복사했어.\n"+FEEDBACK_EMAIL);
+  }catch(e){
+    prompt("아래 메일 주소를 복사해줘.",FEEDBACK_EMAIL);
+  }
+};
 
 $("save").onclick=()=>{
   saveSoon();
@@ -1585,7 +1862,7 @@ $("save").onclick=()=>{
 $("reset").onclick=()=>{
   if(!confirm("안내문 설정을 전부 초기화할까?"))return;
 
-  localStorage.removeItem("noticeMakerV13");
+  localStorage.removeItem("noticeMakerV14");
   state=freshState();
   $("photo").value="";
   render(true);
