@@ -210,6 +210,78 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 .feedback-actions a:hover,.feedback-actions button:hover{border-color:#94aec4;color:var(--blue)}
 .hidden-file{display:none}
 
+.welcome-only{display:none}
+.welcome-mode .normal-only{display:none!important}
+.welcome-mode .welcome-only{display:block}
+.welcome-note{
+  border:1px solid #ead9aa;background:#fffaf0;border-radius:9px;padding:9px 10px;
+  font-size:11px;line-height:1.55;color:#715a25;margin-bottom:10px
+}
+.welcome-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}
+.welcome-actions button{
+  border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 6px;
+  font-size:11px;color:#425464;font-weight:700
+}
+.welcome-content{
+  position:absolute;inset:0;z-index:5;pointer-events:none;color:#fff;
+  font-family:"Pretendard Variable",Pretendard,sans-serif;display:none
+}
+.welcome-title{
+  position:absolute;left:50%;top:var(--welcome-title-y,47%);
+  width:88%;transform:translate(-50%,-50%);
+  text-align:center;font-size:var(--welcome-title-size,66px);font-weight:850;
+  line-height:1.16;letter-spacing:-.045em;white-space:pre-line;word-break:keep-all;
+  overflow-wrap:anywhere
+}
+.welcome-sub{
+  position:absolute;left:50%;top:var(--welcome-sub-y,60%);
+  width:80%;transform:translate(-50%,-50%);
+  text-align:center;font-size:var(--welcome-sub-size,26px);font-weight:550;
+  line-height:1.35;white-space:pre-line;word-break:keep-all
+}
+.welcome-info{
+  position:absolute;left:50%;top:var(--welcome-info-y,74%);
+  width:72%;transform:translate(-50%,-50%);
+  text-align:center;font-size:var(--welcome-info-size,30px);font-weight:480;
+  line-height:1.55;letter-spacing:-.02em;white-space:pre-line;word-break:keep-all
+}
+.welcome-logo-panel{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px
+}
+.welcome-logo-slot{
+  border:1px solid var(--line);border-radius:9px;background:#f8fafb;padding:8px
+}
+.welcome-logo-slot.active{outline:2px solid var(--blue);outline-offset:-2px;background:#f2f7fb}
+.welcome-logo-slot strong{display:block;font-size:11px;color:#344657;margin-bottom:5px}
+.welcome-logo-slot input{font-size:10px;padding:6px}
+.welcome-logo-slot .slot-actions{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px}
+.welcome-logo-slot button{
+  border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 3px;
+  font-size:9.5px;color:#52616e
+}
+.welcome-logo-obj{
+  position:absolute;left:50%;top:20%;width:18%;transform:translate(-50%,-50%);
+  transform-origin:center;z-index:10;touch-action:none;user-select:none;cursor:grab
+}
+.welcome-logo-obj.locked{cursor:not-allowed}
+.welcome-logo-obj img{
+  display:block;width:100%;height:auto;max-height:135px;object-fit:contain;
+  pointer-events:none;-webkit-user-drag:none
+}
+.welcome-logo-obj.selected:before{
+  content:"";position:absolute;inset:-7px;border:2px solid #e1b13f;border-radius:6px;
+  pointer-events:none;box-shadow:0 0 0 2px rgba(255,255,255,.6)
+}
+.page.exporting .welcome-logo-obj.selected:before{display:none}
+.welcome-logo-obj.locked.selected:after{
+  content:"🔒";position:absolute;right:-16px;top:-18px;font-size:15px;pointer-events:none
+}
+.page.exporting .welcome-logo-obj.locked.selected:after{display:none}
+.welcome-screen-badge{
+  display:inline-flex;align-items:center;gap:5px;background:#342c29;color:#f1d078;
+  padding:5px 8px;border-radius:999px;font-size:10px;font-weight:750
+}
+
 .obj{
   position:absolute;left:50%;top:50%;width:20%;transform:translate(-50%,-50%);
   transform-origin:center;z-index:6;touch-action:none;user-select:none;cursor:grab
@@ -254,11 +326,11 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <aside class="sidebar">
   <div class="header">
     <h1>안내문 제작기</h1>
-    <span class="badge">V1.4</span>
+    <span class="badge">V1.5</span>
   </div>
   <p class="desc">
     GitHub 루트의 chars / logos / templates 구조를 그대로 사용해.
-    V1.4에서는 작업파일 저장·불러오기, 출력 파일명, 피드백 메일, 사진 맞춤, 텍스트 대비 경고까지 추가했어.
+    V1.5에서는 ERICA 본관 1층 웰컴보드 2종과 다중 기관 로고 업로드 기능을 추가했어.
   </p>
 
   <section class="section">
@@ -282,7 +354,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
   </section>
 
-  <section class="section">
+  <section class="section normal-only" id="normalContentSection">
     <h2>2. 안내문 내용</h2>
     <div class="field">
       <label><strong>제목</strong></label>
@@ -306,7 +378,43 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
   </section>
 
-  <section class="section">
+  <section class="section welcome-only" id="welcomeContentSection">
+    <h2>2. 웰컴보드 내용</h2>
+    <div class="welcome-note">
+      ERICA 본관 1층 스크린용 16:9 웰컴보드야. 템플릿을 처음 선택하면 예시 문구를 자동으로 보여주고, 이후에는 입력한 내용을 유지해.
+    </div>
+
+    <div class="field">
+      <label><strong>메인 행사명</strong></label>
+      <textarea id="welcomeTitleInput" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label><strong>보조 문구</strong><span>선택</span></label>
+      <input id="welcomeSubInput" type="text" placeholder="예: 방문을 환영합니다">
+    </div>
+    <div class="field">
+      <label><strong>일시</strong></label>
+      <input id="welcomeDateInput" type="text" placeholder="예: 2026.08.25.(화) 14:30">
+    </div>
+    <div class="field">
+      <label><strong>장소</strong></label>
+      <input id="welcomePlaceInput" type="text" placeholder="예: 본관 2층 프라임컨퍼런스홀">
+    </div>
+
+    <div class="welcome-actions">
+      <button type="button" id="loadWelcomeExample">예시 다시 불러오기</button>
+      <button type="button" id="clearWelcomeText">웰컴보드 문구 비우기</button>
+    </div>
+
+    <div style="margin-top:11px">
+      <div class="range"><span>행사명 크기</span><input id="welcomeTitleSize" type="range" min="38" max="92" value="66"><output id="welcomeTitleSizeO">66</output></div>
+      <div class="range"><span>상세정보 크기</span><input id="welcomeInfoSize" type="range" min="18" max="48" value="30"><output id="welcomeInfoSizeO">30</output></div>
+      <div class="range"><span>행사명 위치</span><input id="welcomeTitleY" type="range" min="32" max="65" value="47"><output id="welcomeTitleYO">47%</output></div>
+      <div class="range"><span>일시·장소 위치</span><input id="welcomeInfoY" type="range" min="58" max="88" value="74"><output id="welcomeInfoYO">74%</output></div>
+    </div>
+  </section>
+
+  <section class="section normal-only">
     <h2>3. 글꼴 · 내용 배치</h2>
 
     <div class="field">
@@ -364,7 +472,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
   </section>
 
-  <section class="section">
+  <section class="section normal-only" id="normalMediaSection">
     <h2>4. 로고 · 캐릭터 · 이미지</h2>
 
     <div class="field">
@@ -472,6 +580,55 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
   </section>
 
+  <section class="section welcome-only" id="welcomeLogoSection">
+    <h2>3. 기관 로고 · 웰컴보드 배치</h2>
+    <div class="welcome-note">
+      기관 로고는 최대 4개까지 올릴 수 있어. 우리 학교와 상대 기관 로고를 각각 올리고, 자동 정렬 후 필요한 만큼 직접 끌어 미세조정하면 돼.
+    </div>
+
+    <div class="welcome-logo-panel" id="welcomeLogoPanel">
+      <div class="welcome-logo-slot active" data-wslot="0">
+        <strong>기관 로고 1</strong>
+        <input type="file" id="welcomeLogoFile0" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+        <div class="slot-actions"><button type="button" data-wselect="0">선택</button><button type="button" data-wremove="0">삭제</button></div>
+      </div>
+      <div class="welcome-logo-slot" data-wslot="1">
+        <strong>기관 로고 2</strong>
+        <input type="file" id="welcomeLogoFile1" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+        <div class="slot-actions"><button type="button" data-wselect="1">선택</button><button type="button" data-wremove="1">삭제</button></div>
+      </div>
+      <div class="welcome-logo-slot" data-wslot="2">
+        <strong>기관 로고 3</strong>
+        <input type="file" id="welcomeLogoFile2" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+        <div class="slot-actions"><button type="button" data-wselect="2">선택</button><button type="button" data-wremove="2">삭제</button></div>
+      </div>
+      <div class="welcome-logo-slot" data-wslot="3">
+        <strong>기관 로고 4</strong>
+        <input type="file" id="welcomeLogoFile3" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+        <div class="slot-actions"><button type="button" data-wselect="3">선택</button><button type="button" data-wremove="3">삭제</button></div>
+      </div>
+    </div>
+
+    <div class="welcome-actions">
+      <button type="button" id="autoArrangeWelcomeLogos">기관 로고 자동 정렬</button>
+      <button type="button" id="clearWelcomeLogos">기관 로고 전체 삭제</button>
+    </div>
+
+    <div style="margin-top:11px">
+      <div class="field">
+        <label><strong>현재 선택 로고</strong><span id="welcomeLogoSelectedLabel">기관 로고 1</span></label>
+      </div>
+      <div class="range"><span>가로 위치</span><input id="wLogoX" type="range" min="3" max="97" value="38"><output id="wLogoXO">38%</output></div>
+      <div class="range"><span>세로 위치</span><input id="wLogoY" type="range" min="4" max="42" value="20"><output id="wLogoYO">20%</output></div>
+      <div class="range"><span>크기</span><input id="wLogoSize" type="range" min="5" max="38" value="18"><output id="wLogoSizeO">18%</output></div>
+      <div class="range"><span>투명도</span><input id="wLogoOpacity" type="range" min="10" max="100" value="100"><output id="wLogoOpacityO">100%</output></div>
+      <div class="tiny">
+        <button type="button" id="wLogoLock">🔒 위치 잠금</button>
+        <button type="button" id="wLogoReset">선택 로고 초기화</button>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <h2>5. 저장 · 불러오기</h2>
     <p class="note">PNG는 A4 300dpi 상당 크기, PDF는 실제 A4 규격으로 저장돼. 작업파일은 서버가 아니라 내 컴퓨터에 JSON으로 저장돼.</p>
@@ -513,8 +670,8 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
       <code>logos/hyu_lion_white.png</code><br><br>
 
       <strong>템플릿</strong><br>
-      가로: <code>templates/landscape/template_01.png ~ template_12.png</code><br>
-      세로: <code>templates/portrait/template_01.png ~ template_02.png</code>
+      가로: <code>templates/landscape/template_01.png ~ template_14.png</code><br>
+      세로: <code>templates/portrait/template_01.png ~ template_02.png</code><br><br><strong>웰컴보드 배경</strong><br><code>template_13.png</code> · ERICA 본관 1층 웰컴보드 브라운<br><code>template_14.png</code> · ERICA 본관 1층 웰컴보드 블랙
     </div>
   </section>
 </aside>
@@ -538,9 +695,9 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
         <div class="guide v"></div>
         <div class="guide h"></div>
 
-        <div class="obj" id="watermarkObj" data-name="watermark"><img id="watermarkImg" alt=""></div>
+        <div class="obj normal-only" id="watermarkObj" data-name="watermark"><img id="watermarkImg" alt=""></div>
 
-        <div class="content" id="content">
+        <div class="content normal-only" id="content">
           <div class="title-group" id="titleGroup">
             <h2 class="title empty" id="pTitle"></h2>
             <div class="subtitle empty" id="pSubtitle"></div>
@@ -552,27 +709,39 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
           </div>
         </div>
 
-        <div class="obj selected" id="logoObj" data-name="logo"><img id="logoImg" alt=""></div>
-        <div class="obj" id="characterObj" data-name="character"><img id="characterImg" alt=""></div>
-        <div class="obj" id="photoObj" data-name="photo"><img id="photoImg" alt=""></div>
+        <div class="welcome-content welcome-only" id="welcomeContent">
+          <div class="welcome-title" id="pWelcomeTitle"></div>
+          <div class="welcome-sub" id="pWelcomeSub"></div>
+          <div class="welcome-info" id="pWelcomeInfo"></div>
+        </div>
+
+        <div class="welcome-logo-obj welcome-only selected" id="welcomeLogoObj0" data-welcome-index="0"><img id="welcomeLogoImg0" alt=""></div>
+        <div class="welcome-logo-obj welcome-only" id="welcomeLogoObj1" data-welcome-index="1"><img id="welcomeLogoImg1" alt=""></div>
+        <div class="welcome-logo-obj welcome-only" id="welcomeLogoObj2" data-welcome-index="2"><img id="welcomeLogoImg2" alt=""></div>
+        <div class="welcome-logo-obj welcome-only" id="welcomeLogoObj3" data-welcome-index="3"><img id="welcomeLogoImg3" alt=""></div>
+
+        <div class="obj selected normal-only" id="logoObj" data-name="logo"><img id="logoImg" alt=""></div>
+        <div class="obj normal-only" id="characterObj" data-name="character"><img id="characterImg" alt=""></div>
+        <div class="obj normal-only" id="photoObj" data-name="photo"><img id="photoImg" alt=""></div>
       </div>
     </div>
 
     <section class="patch-panel" id="patchPanel">
       <div class="patch-head">
         <strong>안내문 제작기 업데이트</strong>
-        <span class="patch-current">V1.4 · 2026.08.25</span>
+        <span class="patch-current">V1.5 · 2026.08.25</span>
       </div>
       <ul>
-        <li>피드백 메일 전송 및 메일 주소 복사 기능 추가</li>
-        <li>PNG/PDF 출력 파일명 직접 지정 기능 추가</li>
-        <li>작업파일(JSON) 저장·불러오기 추가</li>
-        <li>제목·본문 위치를 각각 미세조정할 수 있도록 개선</li>
-        <li>사진 맞춤: 원본 비율 / 영역 맞추기 / 영역 채우기 추가</li>
-        <li>텍스트와 템플릿 배경의 대비가 낮으면 경고 표시</li>
+        <li>ERICA 본관 1층 웰컴보드 브라운·블랙 2종 템플릿 추가</li>
+        <li>웰컴보드 선택 시 16:9 스크린 전용 편집 모드 자동 전환</li>
+        <li>메인 행사명·보조 문구·일시·장소 전용 입력 필드 추가</li>
+        <li>웰컴보드 예시 자동 표시 및 예시 다시 불러오기 기능 추가</li>
+        <li>기관 로고 최대 4개 업로드·개별 이동·크기·투명도·잠금 기능 추가</li>
+        <li>기관 로고 자동 정렬 및 1920×1080 PNG 출력 지원</li>
       </ul>
       <details>
         <summary>이전 업데이트 보기</summary>
+        <div class="patch-version"><strong>V1.4 · 2026.08.25</strong><br>피드백 메일, 출력 파일명, 작업파일 저장·불러오기, 제목·본문 위치 미세조정, 사진 맞춤, 글자 대비 경고 추가.</div>
         <div class="patch-version"><strong>V1.3 · 2026.08.25</strong><br>가로 12종·세로 2종 템플릿, 흰색 로고, 로고 6개 위치 프리셋, 캐릭터 썸네일, 요소 잠금, 줄바꿈 오류 수정.</div>
         <div class="patch-version"><strong>V1.2 · 2026.08.25</strong><br>GitHub 루트의 chars / logos / templates 구조에 맞춰 에셋 경로 개편.</div>
         <div class="patch-version"><strong>V1.1 · 2026.08.25</strong><br>메일명함 제작기 캐릭터 자산 재사용 및 이미지 템플릿 방식 도입.</div>
@@ -608,7 +777,9 @@ const TEMPLATES={
     {id:9,name:"Navy Header Gold",text:"#1F2937",accent:"#B18D3C",logoColor:"white"},
     {id:10,name:"Blue Gold Wave",text:"#1F2937",accent:"#B18D3C",logoColor:"default"},
     {id:11,name:"Gold Frame",text:"#1F2937",accent:"#B18D3C",logoColor:"default"},
-    {id:12,name:"Dynamic Diagonal",text:"#1F2937",accent:"#B18D3C",logoColor:"default"}
+    {id:12,name:"Dynamic Diagonal",text:"#1F2937",accent:"#B18D3C",logoColor:"default"},
+    {id:13,name:"ERICA 본관 1층 웰컴보드 브라운",text:"#FFFFFF",accent:"#B38B3A",logoColor:"white",type:"welcome",contentBg:"#2A2422"},
+    {id:14,name:"ERICA 본관 1층 웰컴보드 블랙",text:"#FFFFFF",accent:"#B38B3A",logoColor:"white",type:"welcome",contentBg:"#151515"}
   ],
   portrait:[
     {id:1,name:"Portrait Navy-Gold",text:"#1F2937",accent:"#B18D3C",logoColor:"white"},
@@ -668,6 +839,20 @@ const OBJ_DEFAULTS={
 
 const deepCopy=v=>JSON.parse(JSON.stringify(v));
 
+const WELCOME_EXAMPLE={
+  title:"한양대 ERICA-겐트대학교 글로벌캠퍼스\nMOU 협약식",
+  sub:"",
+  date:"2023.11.08.(수) 14:30",
+  place:"본관 2층 프라임컨퍼런스홀"
+};
+
+const welcomeLogoDefaults=()=>[
+  {data:"",name:"",x:38,y:20,w:18,opacity:1,locked:false,z:10},
+  {data:"",name:"",x:62,y:20,w:18,opacity:1,locked:false,z:10},
+  {data:"",name:"",x:28,y:20,w:16,opacity:1,locked:false,z:10},
+  {data:"",name:"",x:72,y:20,w:16,opacity:1,locked:false,z:10}
+];
+
 const freshState=()=>({
   orientation:"landscape",
   template:1,
@@ -703,6 +888,19 @@ const freshState=()=>({
   photoFit:"original",
   outputName:"안내문",
 
+  welcomeTitle:"",
+  welcomeSub:"",
+  welcomeDate:"",
+  welcomePlace:"",
+  welcomeInitialized:false,
+  welcomeTitleSize:66,
+  welcomeInfoSize:30,
+  welcomeTitleY:47,
+  welcomeSubY:60,
+  welcomeInfoY:74,
+  selectedWelcomeLogo:0,
+  welcomeLogos:welcomeLogoDefaults(),
+
   selected:"logo",
   safe:false,
   objects:deepCopy(OBJ_DEFAULTS.landscape)
@@ -733,6 +931,19 @@ const imgs={
   character:$("characterImg"),
   photo:$("photoImg")
 };
+
+const welcomeLogoObjs=[0,1,2,3].map(i=>$("welcomeLogoObj"+i));
+const welcomeLogoImgs=[0,1,2,3].map(i=>$("welcomeLogoImg"+i));
+
+function isWelcome(){
+  return state.orientation==="landscape" && currentTemplateMeta()?.type==="welcome";
+}
+
+function pageSpec(){
+  return isWelcome()
+    ? {w:1600,h:900,pdf:"landscape",screen:true}
+    : PAGE[state.orientation];
+}
 
 function fontFamily(v){
   if(v==="SUIT") return '"SUIT Variable",SUIT,sans-serif';
@@ -770,14 +981,15 @@ function saveSoon(){
     try{
       const copy=deepCopy(state);
       copy.photoData="";
-      localStorage.setItem("noticeMakerV14",JSON.stringify(copy));
+      copy.welcomeLogos=(copy.welcomeLogos||[]).map(x=>({...x,data:""}));
+      localStorage.setItem("noticeMakerV15",JSON.stringify(copy));
     }catch(e){}
   },160);
 }
 
 function loadSaved(){
   try{
-    const savedRaw=localStorage.getItem("noticeMakerV14")||localStorage.getItem("noticeMakerV13")||"null";
+    const savedRaw=localStorage.getItem("noticeMakerV15")||localStorage.getItem("noticeMakerV14")||localStorage.getItem("noticeMakerV13")||"null";
     const x=JSON.parse(savedRaw);
     if(!x)return;
 
@@ -791,6 +1003,9 @@ function loadSaved(){
     }
 
     state.photoData="";
+    const wbase=welcomeLogoDefaults();
+    state.welcomeLogos=(x.welcomeLogos||wbase).map((item,i)=>({...wbase[i],...item,data:""}));
+    while(state.welcomeLogos.length<4)state.welcomeLogos.push(wbase[state.welcomeLogos.length]);
 
     const list=TEMPLATES[state.orientation]||TEMPLATES.landscape;
     if(!list.some(t=>t.id===state.template))state.template=list[0].id;
@@ -801,7 +1016,7 @@ function buildTemplateButtons(){
   const wrap=$("templates");
   const list=currentTemplates();
   wrap.innerHTML="";
-  $("templateCount").textContent=state.orientation==="landscape"?"가로 12종":"세로 2종";
+  $("templateCount").textContent=state.orientation==="landscape"?"가로 14종":"세로 2종";
 
   for(const item of list){
     const b=document.createElement("button");
@@ -820,14 +1035,22 @@ function buildTemplateButtons(){
     b.appendChild(name);
 
     b.onclick=()=>{
+      const wasWelcome=isWelcome();
       state.template=item.id;
+      const nowWelcome=item.type==="welcome";
+
+      if(nowWelcome && !state.welcomeInitialized){
+        loadWelcomeExample(false);
+      }
+      if(nowWelcome && state.outputName==="안내문"){
+        state.outputName="ERICA 본관 1층 웰컴보드";
+      }
+      if(wasWelcome && !nowWelcome && state.outputName==="ERICA 본관 1층 웰컴보드"){
+        state.outputName="안내문";
+      }
+
       applyTemplateProfile();
-      renderTemplate();
-      buildTemplateButtons();
-      renderContent();
-      renderLogoRecommendation();
-      renderUIColors();
-      saveSoon();
+      render(true);
     };
 
     wrap.appendChild(b);
@@ -881,7 +1104,13 @@ function applyTemplateProfile(){
   state.accent=t.accent;
   state.logoColor=t.logoColor;
 
-  if(state.orientation==="landscape"){
+  if(isWelcome()){
+    state.textColor="#FFFFFF";
+    state.accent="#B38B3A";
+    state.font="Pretendard";
+    state.titleAlign="center";
+    state.bodyAlign="center";
+  }else if(state.orientation==="landscape"){
     state.contentTop=24;
     state.contentWidth=76;
   }else{
@@ -1015,6 +1244,21 @@ function renderTemplate(){
 }
 
 function renderContent(){
+  document.body.classList.toggle("welcome-mode",isWelcome());
+
+  $("pWelcomeTitle").textContent=state.welcomeTitle;
+  $("pWelcomeSub").textContent=state.welcomeSub;
+  $("pWelcomeInfo").textContent=[
+    state.welcomeDate ? `일시 : ${state.welcomeDate}` : "",
+    state.welcomePlace ? `장소 : ${state.welcomePlace}` : ""
+  ].filter(Boolean).join("\n");
+
+  page.style.setProperty("--welcome-title-size",state.welcomeTitleSize+"px");
+  page.style.setProperty("--welcome-info-size",state.welcomeInfoSize+"px");
+  page.style.setProperty("--welcome-title-y",state.welcomeTitleY+"%");
+  page.style.setProperty("--welcome-sub-y",state.welcomeSubY+"%");
+  page.style.setProperty("--welcome-info-y",state.welcomeInfoY+"%");
+
   $("pTitle").textContent=state.title;
   $("pSubtitle").textContent=state.subtitle;
   $("pBody").textContent=state.body;
@@ -1038,7 +1282,7 @@ function renderContent(){
 }
 
 function renderOrientation(){
-  const p=PAGE[state.orientation];
+  const p=pageSpec();
   document.documentElement.style.setProperty("--page-w",p.w+"px");
   document.documentElement.style.setProperty("--page-h",p.h+"px");
   document.querySelectorAll("[data-o]").forEach(b=>b.classList.toggle("active",b.dataset.o===state.orientation));
@@ -1073,7 +1317,7 @@ function renderObjects(){
 }
 
 function fit(){
-  const p=PAGE[state.orientation];
+  const p=pageSpec();
   const aw=Math.max(260,stage.clientWidth-70);
   const ah=Math.max(360,stage.clientHeight-70);
 
@@ -1088,7 +1332,9 @@ function fit(){
 }
 
 function templateContentBackground(){
-  const name=currentTemplateMeta().name;
+  const meta=currentTemplateMeta();
+  if(meta?.contentBg)return meta.contentBg;
+  const name=meta.name;
   if(["Dark Lion","Dark Seal","Dark Gold"].includes(name))return "#12395E";
   return "#FFFFFF";
 }
@@ -1125,9 +1371,9 @@ function check(){
   const st=$("status");
   const c=$("bodyGroup").getBoundingClientRect();
   const p=page.getBoundingClientRect();
-  const t=$("pTitle");
-  const lh=parseFloat(getComputedStyle(t).lineHeight)||state.titleSize*1.18;
-  const titleLong=t.scrollHeight>lh*2.45;
+  const t=isWelcome()?$("pWelcomeTitle"):$("pTitle");
+  const lh=parseFloat(getComputedStyle(t).lineHeight)||(isWelcome()?state.welcomeTitleSize:state.titleSize)*1.18;
+  const titleLong=t.scrollHeight>lh*(isWelcome()?3.4:2.45);
 
   if(!templateReady){
     st.className="status warn";
@@ -1138,7 +1384,7 @@ function check(){
   }else if(titleLong){
     st.className="status warn";
     st.textContent="제목이 김 · 2줄 권장";
-  }else if(c.bottom>p.bottom-25){
+  }else if(!isWelcome() && c.bottom>p.bottom-25){
     st.className="status warn";
     st.textContent="본문이 아래로 넘칠 수 있음";
   }else{
@@ -1269,7 +1515,170 @@ function presetLogoPosition(key){
   selectObject("logo");
 }
 
+function loadWelcomeExample(shouldRender=true){
+  state.welcomeTitle=WELCOME_EXAMPLE.title;
+  state.welcomeSub=WELCOME_EXAMPLE.sub;
+  state.welcomeDate=WELCOME_EXAMPLE.date;
+  state.welcomePlace=WELCOME_EXAMPLE.place;
+  state.welcomeInitialized=true;
+  if(shouldRender)render(true);
+}
+
+function renderWelcomeLogos(){
+  const list=state.welcomeLogos||[];
+  for(let i=0;i<4;i++){
+    const item=list[i]||welcomeLogoDefaults()[i];
+    const obj=welcomeLogoObjs[i];
+    const img=welcomeLogoImgs[i];
+
+    obj.style.left=item.x+"%";
+    obj.style.top=item.y+"%";
+    obj.style.width=item.w+"%";
+    obj.style.opacity=item.opacity;
+    obj.style.zIndex=item.z||10;
+    obj.classList.toggle("selected",i===state.selectedWelcomeLogo);
+    obj.classList.toggle("locked",!!item.locked);
+
+    if(item.data){
+      obj.style.display=isWelcome()?"":"none";
+      img.src=item.data;
+    }else{
+      obj.style.display="none";
+      img.removeAttribute("src");
+    }
+  }
+}
+
+function selectWelcomeLogo(index){
+  state.selectedWelcomeLogo=Math.max(0,Math.min(3,Number(index)||0));
+  document.querySelectorAll("[data-wslot]").forEach(x=>{
+    x.classList.toggle("active",Number(x.dataset.wslot)===state.selectedWelcomeLogo);
+  });
+  renderWelcomeLogos();
+  updateWelcomeLogoControls();
+  saveSoon();
+}
+
+function updateWelcomeLogoControls(){
+  const i=state.selectedWelcomeLogo||0;
+  const item=state.welcomeLogos[i]||welcomeLogoDefaults()[i];
+
+  $("welcomeLogoSelectedLabel").textContent=`기관 로고 ${i+1}${item.name?` · ${item.name}`:""}`;
+  $("wLogoX").value=item.x;
+  $("wLogoY").value=item.y;
+  $("wLogoSize").value=item.w;
+  $("wLogoOpacity").value=Math.round(item.opacity*100);
+
+  $("wLogoXO").value=Math.round(item.x)+"%";
+  $("wLogoYO").value=Math.round(item.y)+"%";
+  $("wLogoSizeO").value=Math.round(item.w)+"%";
+  $("wLogoOpacityO").value=Math.round(item.opacity*100)+"%";
+
+  ["wLogoX","wLogoY","wLogoSize","wLogoOpacity"].forEach(id=>{
+    $(id).disabled=!!item.locked;
+  });
+  $("wLogoReset").disabled=!!item.locked;
+  $("wLogoLock").textContent=item.locked?"🔓 잠금 해제":"🔒 위치 잠금";
+}
+
+function loadWelcomeLogoFile(index,file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const item=state.welcomeLogos[index];
+    item.data=String(reader.result||"");
+    item.name=file.name||"";
+    state.selectedWelcomeLogo=index;
+    autoArrangeWelcomeLogos(false);
+    renderWelcomeLogos();
+    renderUI();
+    saveSoon();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeWelcomeLogo(index){
+  const base=welcomeLogoDefaults()[index];
+  state.welcomeLogos[index]={...base};
+  const input=$("welcomeLogoFile"+index);
+  if(input)input.value="";
+  renderWelcomeLogos();
+  updateWelcomeLogoControls();
+  saveSoon();
+}
+
+function clearWelcomeLogos(){
+  state.welcomeLogos=welcomeLogoDefaults();
+  for(let i=0;i<4;i++){
+    const input=$("welcomeLogoFile"+i);
+    if(input)input.value="";
+  }
+  state.selectedWelcomeLogo=0;
+  renderWelcomeLogos();
+  renderUI();
+  saveSoon();
+}
+
+function autoArrangeWelcomeLogos(shouldSave=true){
+  const active=[];
+  state.welcomeLogos.forEach((x,i)=>{if(x.data)active.push(i)});
+  const count=active.length;
+  if(!count){
+    if(shouldSave)alert("먼저 기관 로고를 한 개 이상 올려줘.");
+    return;
+  }
+
+  let xs=[],w=18;
+  if(count===1){xs=[50];w=22}
+  if(count===2){xs=[38,62];w=19}
+  if(count===3){xs=[27,50,73];w=16}
+  if(count===4){xs=[18,39,61,82];w=14}
+
+  active.forEach((idx,j)=>{
+    const item=state.welcomeLogos[idx];
+    if(item.locked)return;
+    item.x=xs[j];
+    item.y=20;
+    item.w=w;
+    item.opacity=1;
+  });
+
+  renderWelcomeLogos();
+  updateWelcomeLogoControls();
+  if(shouldSave)saveSoon();
+}
+
+function welcomeLogoPointerDown(e){
+  if(!isWelcome())return;
+  const index=Number(e.currentTarget.dataset.welcomeIndex);
+  const item=state.welcomeLogos[index];
+  if(!item?.data)return;
+
+  e.preventDefault();
+  selectWelcomeLogo(index);
+  if(item.locked)return;
+
+  drag={kind:"welcome",index,rect:page.getBoundingClientRect()};
+  page.classList.add("dragging");
+  e.currentTarget.setPointerCapture?.(e.pointerId);
+}
+
 function renderUI(){
+  document.body.classList.toggle("welcome-mode",isWelcome());
+
+  $("welcomeTitleInput").value=state.welcomeTitle;
+  $("welcomeSubInput").value=state.welcomeSub;
+  $("welcomeDateInput").value=state.welcomeDate;
+  $("welcomePlaceInput").value=state.welcomePlace;
+  $("welcomeTitleSize").value=state.welcomeTitleSize;
+  $("welcomeInfoSize").value=state.welcomeInfoSize;
+  $("welcomeTitleY").value=state.welcomeTitleY;
+  $("welcomeInfoY").value=state.welcomeInfoY;
+  $("welcomeTitleSizeO").value=state.welcomeTitleSize;
+  $("welcomeInfoSizeO").value=state.welcomeInfoSize;
+  $("welcomeTitleYO").value=state.welcomeTitleY+"%";
+  $("welcomeInfoYO").value=state.welcomeInfoY+"%";
+
   $("title").value=state.title;
   $("subtitle").value=state.subtitle;
   $("body").value=state.body;
@@ -1314,6 +1723,15 @@ function renderUI(){
   buildCharGrid();
   renderLogoRecommendation();
   updateObjectControls();
+  renderWelcomeLogos();
+  updateWelcomeLogoControls();
+
+  const help=document.querySelector(".toolbar .help");
+  if(help){
+    help.innerHTML=isWelcome()
+      ? '웰컴보드 16:9 모드 · 기관 로고를 최대 4개 업로드하고 화면에서 직접 끌어 이동할 수 있어. <span class="welcome-screen-badge">1920×1080 PNG 권장</span>'
+      : '미리보기에서 요소를 직접 끌어 이동할 수 있어. 로고는 인쇄 안전여백 밖으로 나가지 않게 자동 제한돼.';
+  }
 }
 
 function render(allUI=false){
@@ -1322,6 +1740,7 @@ function render(allUI=false){
   renderTemplate();
   renderAssets();
   renderObjects();
+  renderWelcomeLogos();
   renderSafe();
 
   if(allUI)renderUI();
@@ -1373,7 +1792,7 @@ function pointerDown(e){
 
   if(state.objects[name].locked)return;
 
-  drag={name,rect:page.getBoundingClientRect()};
+  drag={kind:"normal",name,rect:page.getBoundingClientRect()};
   page.classList.add("dragging");
   e.currentTarget.setPointerCapture?.(e.pointerId);
 }
@@ -1387,6 +1806,16 @@ function pointerMove(e){
 
   if(Math.abs(x-50)<1.1)x=50;
   if(Math.abs(y-50)<1.1)y=50;
+
+  if(drag.kind==="welcome"){
+    const item=state.welcomeLogos[drag.index];
+    if(!item||item.locked)return;
+    item.x=clamp(x,3,97);
+    item.y=clamp(y,4,45);
+    renderWelcomeLogos();
+    updateWelcomeLogoControls();
+    return;
+  }
 
   setObjectPosition(drag.name,x,y);
   renderObjects();
@@ -1448,6 +1877,10 @@ function mergeImportedState(incoming){
   for(const k of Object.keys(baseObjects)){
     merged.objects[k]={...baseObjects[k],...(x.objects?.[k]||{})};
   }
+  const wbase=welcomeLogoDefaults();
+  merged.welcomeLogos=(x.welcomeLogos||wbase).map((item,i)=>({...wbase[i],...item}));
+  while(merged.welcomeLogos.length<4)merged.welcomeLogos.push(wbase[merged.welcomeLogos.length]);
+
   const list=TEMPLATES[orientation];
   if(!list.some(t=>t.id===merged.template))merged.template=list[0].id;
   return merged;
@@ -1497,7 +1930,7 @@ async function makeCanvas(){
 
   try{
     return await html2canvas(page,{
-      scale:300/96,
+      scale:isWelcome()?(1920/pageSpec().w):(300/96),
       useCORS:true,
       allowTaint:false,
       backgroundColor:"#ffffff",
@@ -1544,16 +1977,17 @@ async function exportPDF(){
 
     const {jsPDF}=window.jspdf;
     const landscape=state.orientation==="landscape";
+    const welcome=isWelcome();
 
     const pdf=new jsPDF({
       orientation:landscape?"landscape":"portrait",
       unit:"mm",
-      format:"a4",
+      format:welcome?[338.67,190.5]:"a4",
       compress:true
     });
 
-    const w=landscape?297:210;
-    const h=landscape?210:297;
+    const w=welcome?338.67:(landscape?297:210);
+    const h=welcome?190.5:(landscape?210:297);
 
     pdf.addImage(c.toDataURL("image/png"),"PNG",0,0,w,h,undefined,"FAST");
     pdf.save(safeOutputName()+".pdf");
@@ -1589,6 +2023,96 @@ bindText("subtitle","subtitle");
 bindText("body","body");
 bindText("emphasis","emphasis");
 bindText("footer","footer");
+
+function bindWelcomeText(id,key){
+  $(id).addEventListener("input",e=>{
+    state[key]=e.target.value;
+    state.welcomeInitialized=true;
+    renderContent();
+    requestAnimationFrame(check);
+    saveSoon();
+  });
+}
+
+bindWelcomeText("welcomeTitleInput","welcomeTitle");
+bindWelcomeText("welcomeSubInput","welcomeSub");
+bindWelcomeText("welcomeDateInput","welcomeDate");
+bindWelcomeText("welcomePlaceInput","welcomePlace");
+
+$("loadWelcomeExample").onclick=()=>loadWelcomeExample(true);
+$("clearWelcomeText").onclick=()=>{
+  state.welcomeTitle="";
+  state.welcomeSub="";
+  state.welcomeDate="";
+  state.welcomePlace="";
+  state.welcomeInitialized=true;
+  render(true);
+};
+
+function welcomeRange(id,key,out,fmt=v=>v){
+  $(id).oninput=e=>{
+    state[key]=Number(e.target.value);
+    $(out).value=fmt(state[key]);
+    renderContent();
+    saveSoon();
+  };
+}
+welcomeRange("welcomeTitleSize","welcomeTitleSize","welcomeTitleSizeO");
+welcomeRange("welcomeInfoSize","welcomeInfoSize","welcomeInfoSizeO");
+welcomeRange("welcomeTitleY","welcomeTitleY","welcomeTitleYO",v=>v+"%");
+welcomeRange("welcomeInfoY","welcomeInfoY","welcomeInfoYO",v=>v+"%");
+
+for(let i=0;i<4;i++){
+  $("welcomeLogoFile"+i).onchange=e=>loadWelcomeLogoFile(i,e.target.files?.[0]);
+}
+document.querySelectorAll("[data-wselect]").forEach(b=>{
+  b.onclick=()=>selectWelcomeLogo(Number(b.dataset.wselect));
+});
+document.querySelectorAll("[data-wremove]").forEach(b=>{
+  b.onclick=()=>removeWelcomeLogo(Number(b.dataset.wremove));
+});
+$("autoArrangeWelcomeLogos").onclick=()=>autoArrangeWelcomeLogos(true);
+$("clearWelcomeLogos").onclick=()=>{
+  if(confirm("업로드한 기관 로고를 전부 삭제할까?"))clearWelcomeLogos();
+};
+
+$("wLogoX").oninput=e=>{
+  const item=state.welcomeLogos[state.selectedWelcomeLogo];
+  if(item.locked)return;
+  item.x=Number(e.target.value);
+  renderWelcomeLogos();updateWelcomeLogoControls();saveSoon();
+};
+$("wLogoY").oninput=e=>{
+  const item=state.welcomeLogos[state.selectedWelcomeLogo];
+  if(item.locked)return;
+  item.y=Number(e.target.value);
+  renderWelcomeLogos();updateWelcomeLogoControls();saveSoon();
+};
+$("wLogoSize").oninput=e=>{
+  const item=state.welcomeLogos[state.selectedWelcomeLogo];
+  if(item.locked)return;
+  item.w=Number(e.target.value);
+  renderWelcomeLogos();updateWelcomeLogoControls();saveSoon();
+};
+$("wLogoOpacity").oninput=e=>{
+  const item=state.welcomeLogos[state.selectedWelcomeLogo];
+  if(item.locked)return;
+  item.opacity=Number(e.target.value)/100;
+  renderWelcomeLogos();updateWelcomeLogoControls();saveSoon();
+};
+$("wLogoLock").onclick=()=>{
+  const item=state.welcomeLogos[state.selectedWelcomeLogo];
+  item.locked=!item.locked;
+  renderWelcomeLogos();updateWelcomeLogoControls();saveSoon();
+};
+$("wLogoReset").onclick=()=>{
+  const i=state.selectedWelcomeLogo;
+  const current=state.welcomeLogos[i];
+  if(current.locked)return;
+  const base=welcomeLogoDefaults()[i];
+  state.welcomeLogos[i]={...current,x:base.x,y:base.y,w:base.w,opacity:1};
+  renderWelcomeLogos();updateWelcomeLogoControls();saveSoon();
+};
 
 $("font").onchange=e=>{
   state.font=e.target.value;
@@ -1817,6 +2341,13 @@ Object.values(objs).forEach(el=>{
   el.addEventListener("pointercancel",pointerUp);
 });
 
+welcomeLogoObjs.forEach(el=>{
+  el.addEventListener("pointerdown",welcomeLogoPointerDown);
+  el.addEventListener("pointermove",pointerMove);
+  el.addEventListener("pointerup",pointerUp);
+  el.addEventListener("pointercancel",pointerUp);
+});
+
 $("png").onclick=exportPNG;
 $("pdf").onclick=exportPDF;
 $("workSave").onclick=exportWorkFile;
@@ -1828,7 +2359,7 @@ $("feedbackMail").onclick=e=>{
   e.preventDefault();
   const subject="[안내문 제작기 피드백]";
   const body=[
-    "안내문 제작기 V1.4 피드백입니다.",
+    "안내문 제작기 V1.5 피드백입니다.",
     "",
     "[구분]",
     "오류 / 개선 제안 / 기타",
@@ -1862,6 +2393,7 @@ $("save").onclick=()=>{
 $("reset").onclick=()=>{
   if(!confirm("안내문 설정을 전부 초기화할까?"))return;
 
+  localStorage.removeItem("noticeMakerV15");
   localStorage.removeItem("noticeMakerV14");
   state=freshState();
   $("photo").value="";
