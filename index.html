@@ -166,10 +166,10 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="header"><h1>안내문 제작기</h1><span class="badge">V1.1</span></div>
+  <div class="header"><h1>안내문 제작기</h1><span class="badge">V1.2</span></div>
   <p class="desc">
-    기존 메일명함 제작기의 캐릭터 파일명을 그대로 사용하도록 수정한 버전.
-    템플릿은 이미지 파일을 assets/templates 안에 넣어서 교체하는 방식이야.
+    현재 GitHub 루트의 chars / logos / templates 구조에 바로 맞춘 버전.
+    별도의 assets 폴더 없이 지금 저장소 구조 그대로 사용하면 돼.
   </p>
 
   <section class="section">
@@ -319,11 +319,11 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
   <section class="section">
     <div class="asset-info">
       <strong>템플릿 경로</strong><br>
-      가로: <code>assets/templates/landscape/template_01.png</code> ~ <code>template_08.png</code><br>
-      세로: <code>assets/templates/portrait/template_01.png</code> ~ <code>template_08.png</code><br><br>
+      가로: <code>templates/landscape/template_01.png</code> ~ <code>template_08.png</code><br>
+      세로: <code>templates/portrait/template_01.png</code> ~ <code>template_08.png</code><br><br>
       <strong>추가 로고</strong><br>
-      <code>assets/logos/hyu_round.png</code><br>
-      <code>assets/logos/hyu_lion.png</code>
+      <code>logos/hyu_round.png</code><br>
+      <code>logos/hyu_lion.png</code>
     </div>
   </section>
 </aside>
@@ -375,10 +375,10 @@ const PAGE={
 };
 
 const LOGOS={
-  hyu:"assets/logos/hyu.png",
-  hyu_erica:"assets/logos/hyu_erica.png",
-  hyu_round:"assets/logos/hyu_round.png",
-  hyu_lion:"assets/logos/hyu_lion.png"
+  hyu:"logos/hyu.png",
+  hyu_erica:"logos/hyu_erica.png",
+  hyu_round:"logos/hyu_round.png",
+  hyu_lion:"logos/hyu_lion.png"
 };
 
 const CHAR_COUNTS={
@@ -473,13 +473,13 @@ function fontFamily(v){
 
 function templatePath(){
   const folder=state.orientation==="landscape"?"landscape":"portrait";
-  return `assets/templates/${folder}/template_${String(state.template).padStart(2,"0")}.png`;
+  return `templates/${folder}/template_${String(state.template).padStart(2,"0")}.png`;
 }
 
 function charPath(){
   if(state.charCategory==="none") return "";
   const n=String(state.charIndex).padStart(2,"0");
-  return `assets/chars/${state.charCategory}_${n}.png`;
+  return `chars/${state.charCategory}_${n}.png`;
 }
 
 function charLabel(){
@@ -601,12 +601,12 @@ function renderContent(){
 
 function renderAssets(){
   setAsset("logo",state.logo==="none"?"":LOGOS[state.logo],
-    state.logo==="hyu_round"?"assets/logos/hyu_round.png 필요":
-    state.logo==="hyu_lion"?"assets/logos/hyu_lion.png 필요":"로고 파일 없음");
+    state.logo==="hyu_round"?"logos/hyu_round.png 필요":
+    state.logo==="hyu_lion"?"logos/hyu_lion.png 필요":"로고 파일 없음");
 
   setAsset("watermark",state.watermark==="none"?"":LOGOS[state.watermark],
-    state.watermark==="hyu_round"?"assets/logos/hyu_round.png 필요":
-    state.watermark==="hyu_lion"?"assets/logos/hyu_lion.png 필요":"워터마크 파일 없음");
+    state.watermark==="hyu_round"?"logos/hyu_round.png 필요":
+    state.watermark==="hyu_lion"?"logos/hyu_lion.png 필요":"워터마크 파일 없음");
 
   setAsset("character",charPath(),charLabel()+" 파일 없음");
   setAsset("photo",state.photoData,state.photoData?"사진":"");
