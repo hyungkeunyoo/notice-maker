@@ -103,6 +103,19 @@ input:focus,select:focus,textarea:focus{border-color:#8db1d2;box-shadow:0 0 0 3p
 }
 .rich-editor strong{font-weight:800}
 .rich-editor span[style*="color"]{text-decoration:none}
+.text-position-tools{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border:1px solid #dfe6eb;background:#f8fafb;border-radius:9px;
+  padding:8px 9px;margin:-2px 0 11px
+}
+.text-position-tools span{
+  font-size:10.5px;line-height:1.45;color:#687682
+}
+.text-position-tools button{
+  flex:0 0 auto;border:1px solid #d8e0e6;background:#fff;color:#334553;
+  border-radius:7px;height:31px;padding:0 9px;font-size:10.5px;font-weight:750
+}
+.text-position-tools button:hover{border-color:#93aec4;color:var(--blue)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#eef2f5;border-radius:10px}
 .segment button{border:0;border-radius:7px;background:transparent;padding:9px;color:#596674;font-size:12px}
@@ -268,6 +281,29 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 .title-group,.body-group{position:relative}
 .title-group{transform:translateY(var(--title-shift,0px))}
 .body-group{transform:translateY(var(--body-shift,0px))}
+
+/* V1.6.1: 미리보기 텍스트 개별 드래그 */
+.text-drag{
+  position:relative;
+  pointer-events:auto;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  cursor:grab;
+  transform:translate(var(--text-x,0px),var(--text-y,0px));
+}
+.text-drag:hover{
+  outline:1px dashed rgba(43,139,211,.55);
+  outline-offset:4px;
+}
+.text-drag.text-dragging{
+  cursor:grabbing;
+  outline:2px solid rgba(43,139,211,.88);
+  outline-offset:5px;
+}
+.page.exporting .text-drag{
+  outline:none!important;
+}
 .empty:empty{display:none}
 
 .photo-fit-box{overflow:hidden;background:rgba(255,255,255,.12)}
@@ -336,7 +372,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <aside class="sidebar">
   <div class="header">
     <h1>안내문 제작기</h1>
-    <span class="badge">V1.6</span>
+    <span class="badge">V1.6.1</span>
   </div>
   <p class="desc">
     GitHub 루트의 chars / logos / templates 구조를 그대로 사용해.
@@ -386,6 +422,11 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
       <input type="color" id="richColor" value="#0E4A84" title="직접 색상 선택">
       <span class="toolbar-sep"></span>
       <button type="button" id="richClear">서식 제거</button>
+    </div>
+
+    <div class="text-position-tools">
+      <span>미리보기의 제목·부제목·본문·강조문·하단 문구를 <strong>직접 드래그</strong>해서 위치를 옮길 수 있어.</span>
+      <button type="button" id="textPositionReset">글 위치 초기화</button>
     </div>
 
     <div class="field">
@@ -631,7 +672,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <main class="workspace">
   <div class="toolbar">
     <div class="help">
-      미리보기에서 요소를 직접 끌어 이동할 수 있어. 로고는 인쇄 안전여백 밖으로 나가지 않게 자동 제한돼.
+      미리보기에서 로고·이미지뿐 아니라 제목·부제목·본문·강조문·하단 문구도 직접 끌어 이동할 수 있어.
     </div>
     <span class="status" id="status">레이아웃 정상</span>
   </div>
@@ -651,13 +692,13 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 
         <div class="content" id="content">
           <div class="title-group" id="titleGroup">
-            <h2 class="title empty" id="pTitle"></h2>
-            <div class="subtitle empty" id="pSubtitle"></div>
+            <h2 class="title empty text-drag" id="pTitle" data-text-key="title" title="드래그해서 제목 위치 이동"></h2>
+            <div class="subtitle empty text-drag" id="pSubtitle" data-text-key="subtitle" title="드래그해서 부제목 위치 이동"></div>
           </div>
           <div class="body-group" id="bodyGroup">
-            <div class="body empty" id="pBody"></div>
-            <div class="emphasis empty" id="pEmphasis"></div>
-            <div class="footer empty" id="pFooter"></div>
+            <div class="body empty text-drag" id="pBody" data-text-key="body" title="드래그해서 본문 위치 이동"></div>
+            <div class="emphasis empty text-drag" id="pEmphasis" data-text-key="emphasis" title="드래그해서 강조문 위치 이동"></div>
+            <div class="footer empty text-drag" id="pFooter" data-text-key="footer" title="드래그해서 하단 문구 위치 이동"></div>
           </div>
         </div>
 
@@ -670,9 +711,13 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     <section class="patch-panel" id="patchPanel">
       <div class="patch-head">
         <strong>안내문 제작기 업데이트</strong>
-        <span class="patch-current">V1.6 · 2026.08.27</span>
+        <span class="patch-current">V1.6.1 · 2026.08.27</span>
       </div>
       <ul>
+        <li>미리보기에서 제목·부제목·본문·강조문·하단 문구를 각각 직접 드래그해 위치 이동 가능</li>
+        <li>텍스트 드래그 시 페이지 밖으로 완전히 밀려나지 않도록 이동 범위 제한</li>
+        <li>가로 중앙에 가까워지면 자동 스냅되도록 개선</li>
+        <li>‘글 위치 초기화’ 버튼으로 드래그 이동값을 한 번에 원위치 가능</li>
         <li>제목·부제목·본문·강조문·하단 문구의 특정 글자만 굵게 표시하는 부분 볼드 기능 추가</li>
         <li>선택한 글자만 개별 색상을 적용하는 부분 글자색 기능 추가</li>
         <li>한양 블루·골드·레드·블랙·화이트 빠른 색상 및 직접 색상 선택 지원</li>
@@ -808,6 +853,15 @@ const freshState=()=>({
   contentWidth:76,
   titleShift:0,
   bodyShift:0,
+
+  textOffsets:{
+    title:{x:0,y:0},
+    subtitle:{x:0,y:0},
+    body:{x:0,y:0},
+    emphasis:{x:0,y:0},
+    footer:{x:0,y:0}
+  },
+
   textColor:"#1F2937",
   accent:"#0E4A84",
 
@@ -829,6 +883,7 @@ const freshState=()=>({
 
 let state=freshState();
 let drag=null;
+let textDrag=null;
 let topZ=20;
 let templateReady=true;
 let saveTimer=null;
@@ -1052,6 +1107,36 @@ function clearRichFormat(){
   rememberRichSelection();
 }
 
+function normalizeTextOffsets(target){
+  const defaults={
+    title:{x:0,y:0},
+    subtitle:{x:0,y:0},
+    body:{x:0,y:0},
+    emphasis:{x:0,y:0},
+    footer:{x:0,y:0}
+  };
+
+  const src=target&&typeof target==="object"?target:{};
+  const out={};
+
+  for(const key of Object.keys(defaults)){
+    const item=src[key]&&typeof src[key]==="object"?src[key]:{};
+    const x=Number(item.x);
+    const y=Number(item.y);
+    out[key]={
+      x:Number.isFinite(x)?x:0,
+      y:Number.isFinite(y)?y:0
+    };
+  }
+  return out;
+}
+
+function resetTextOffsets(){
+  state.textOffsets=normalizeTextOffsets(null);
+  renderTextOffsets();
+  saveSoon();
+}
+
 function fontFamily(v){
   if(v==="SUIT") return '"SUIT Variable",SUIT,sans-serif';
   if(v==="Noto Sans KR") return '"Noto Sans KR",sans-serif';
@@ -1101,6 +1186,7 @@ function loadSaved(){
 
     const b=freshState();
     state=migrateRichState({...b,...x});
+    state.textOffsets=normalizeTextOffsets(x.textOffsets||state.textOffsets);
 
     const baseObjects=deepCopy(OBJ_DEFAULTS[state.orientation]||OBJ_DEFAULTS.landscape);
     state.objects={...baseObjects,...(x.objects||{})};
@@ -1361,6 +1447,24 @@ function renderTemplate(){
   templateBg.src=templatePath()+"?v="+Date.now();
 }
 
+function renderTextOffsets(){
+  const map={
+    title:$("pTitle"),
+    subtitle:$("pSubtitle"),
+    body:$("pBody"),
+    emphasis:$("pEmphasis"),
+    footer:$("pFooter")
+  };
+
+  state.textOffsets=normalizeTextOffsets(state.textOffsets);
+
+  for(const [key,el] of Object.entries(map)){
+    const o=state.textOffsets[key];
+    el.style.setProperty("--text-x",o.x+"px");
+    el.style.setProperty("--text-y",o.y+"px");
+  }
+}
+
 function renderContent(){
   $("pTitle").innerHTML=sanitizeRichHtml(state.title);
   $("pSubtitle").innerHTML=sanitizeRichHtml(state.subtitle);
@@ -1382,6 +1486,7 @@ function renderContent(){
   page.style.setProperty("--body-align",state.bodyAlign);
   page.style.setProperty("--text-color",state.textColor);
   page.style.setProperty("--accent",state.accent);
+  renderTextOffsets();
 }
 
 function renderOrientation(){
@@ -1747,6 +1852,87 @@ function pointerUp(){
   saveSoon();
 }
 
+function textPointerDown(e){
+  const el=e.currentTarget;
+  const key=el.dataset.textKey;
+  if(!key || !state.textOffsets?.[key])return;
+  if(!richPlainText(state[key]).trim())return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const pageRect=page.getBoundingClientRect();
+  const elRect=el.getBoundingClientRect();
+
+  const scaleX=(page.clientWidth||PAGE[state.orientation].w)/pageRect.width;
+  const scaleY=(page.clientHeight||PAGE[state.orientation].h)/pageRect.height;
+
+  const current=state.textOffsets[key];
+
+  textDrag={
+    key,
+    el,
+    pointerId:e.pointerId,
+    startClientX:e.clientX,
+    startClientY:e.clientY,
+    startX:current.x,
+    startY:current.y,
+    scaleX,
+    scaleY,
+    pageW:page.clientWidth||PAGE[state.orientation].w,
+    pageH:page.clientHeight||PAGE[state.orientation].h,
+    baseLeft:(elRect.left-pageRect.left)*scaleX-current.x,
+    baseTop:(elRect.top-pageRect.top)*scaleY-current.y,
+    width:elRect.width*scaleX,
+    height:elRect.height*scaleY
+  };
+
+  page.classList.add("dragging");
+  el.classList.add("text-dragging");
+  el.setPointerCapture?.(e.pointerId);
+}
+
+function textPointerMove(e){
+  if(!textDrag || e.pointerId!==textDrag.pointerId)return;
+
+  const d=textDrag;
+  const dx=(e.clientX-d.startClientX)*d.scaleX;
+  const dy=(e.clientY-d.startClientY)*d.scaleY;
+
+  let x=d.startX+dx;
+  let y=d.startY+dy;
+
+  // 페이지 밖으로 완전히 밀려나지 않도록 최소 여백 유지
+  const margin=12;
+  const minX=margin-d.baseLeft;
+  const maxX=d.pageW-margin-(d.baseLeft+d.width);
+  const minY=margin-d.baseTop;
+  const maxY=d.pageH-margin-(d.baseTop+d.height);
+
+  if(minX<=maxX)x=Math.max(minX,Math.min(maxX,x));
+  if(minY<=maxY)y=Math.max(minY,Math.min(maxY,y));
+
+  // 원래 가로 중심선에 가까우면 착 붙도록 스냅
+  const baseCenterX=d.baseLeft+d.width/2;
+  const targetCenterX=d.pageW/2;
+  if(Math.abs((baseCenterX+x)-targetCenterX)<10){
+    x=targetCenterX-baseCenterX;
+  }
+
+  state.textOffsets[d.key]={x:Math.round(x),y:Math.round(y)};
+  renderTextOffsets();
+}
+
+function textPointerUp(e){
+  if(!textDrag)return;
+  if(e && e.pointerId!==undefined && e.pointerId!==textDrag.pointerId)return;
+
+  textDrag.el.classList.remove("text-dragging");
+  textDrag=null;
+  page.classList.remove("dragging");
+  saveSoon();
+}
+
 function assetMissing(){
   const miss=[];
 
@@ -1790,6 +1976,7 @@ function mergeImportedState(incoming){
 
   const orientation=x.orientation in PAGE?x.orientation:b.orientation;
   const merged=migrateRichState({...b,...x,orientation});
+  merged.textOffsets=normalizeTextOffsets(x.textOffsets||merged.textOffsets);
   const baseObjects=deepCopy(OBJ_DEFAULTS[orientation]);
   merged.objects={...baseObjects,...(x.objects||{})};
   for(const k of Object.keys(baseObjects)){
@@ -1803,7 +1990,7 @@ function mergeImportedState(incoming){
 function exportWorkFile(){
   const payload={
     app:"notice-maker",
-    version:"1.6",
+    version:"1.6.1",
     savedAt:new Date().toISOString(),
     state:state
   };
@@ -1924,6 +2111,7 @@ document.querySelectorAll("[data-o]").forEach(b=>{
     state.orientation=b.dataset.o;
     state.template=1;
     state.objects=deepCopy(OBJ_DEFAULTS[state.orientation]);
+    state.textOffsets=normalizeTextOffsets(null);
 
     applyTemplateProfile();
 
@@ -2182,6 +2370,17 @@ Object.values(objs).forEach(el=>{
   el.addEventListener("pointercancel",pointerUp);
 });
 
+document.querySelectorAll(".text-drag").forEach(el=>{
+  el.addEventListener("pointerdown",textPointerDown);
+  el.addEventListener("pointermove",textPointerMove);
+  el.addEventListener("pointerup",textPointerUp);
+  el.addEventListener("pointercancel",textPointerUp);
+});
+
+$("textPositionReset").onclick=()=>{
+  resetTextOffsets();
+};
+
 $("png").onclick=exportPNG;
 $("pdf").onclick=exportPDF;
 $("workSave").onclick=exportWorkFile;
@@ -2193,7 +2392,7 @@ $("feedbackMail").onclick=e=>{
   e.preventDefault();
   const subject="[안내문 제작기 피드백]";
   const body=[
-    "안내문 제작기 V1.6 피드백입니다.",
+    "안내문 제작기 V1.6.1 피드백입니다.",
     "",
     "[구분]",
     "오류 / 개선 제안 / 기타",
