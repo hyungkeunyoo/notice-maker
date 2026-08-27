@@ -61,6 +61,48 @@ input[type=text],select,textarea,.control{
 }
 textarea{resize:vertical;min-height:70px;line-height:1.5}
 input:focus,select:focus,textarea:focus{border-color:#8db1d2;box-shadow:0 0 0 3px rgba(14,74,132,.08)}
+
+.rich-help{
+  border:1px solid #d9e3eb;background:#f6f9fb;border-radius:9px;
+  padding:9px 10px;margin-bottom:10px;font-size:10.8px;line-height:1.55;color:#5b6b78
+}
+.rich-toolbar{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:7px;border:1px solid #dfe6eb;background:#f8fafb;border-radius:9px;
+  margin-bottom:10px
+}
+.rich-toolbar button{
+  border:1px solid #d8e0e6;background:#fff;color:#334553;border-radius:7px;
+  min-width:34px;height:31px;padding:0 8px;font-size:11px;font-weight:750
+}
+.rich-toolbar button:hover{border-color:#93aec4;color:var(--blue)}
+.rich-toolbar .bold-btn{font-size:15px;font-weight:900}
+.rich-toolbar .toolbar-sep{width:1px;height:22px;background:#dde4e9;margin:0 1px}
+.rich-toolbar .toolbar-label{font-size:10px;color:#687682;margin-left:2px}
+.rich-toolbar input[type=color]{
+  width:34px;height:31px;border:1px solid #d8e0e6;border-radius:7px;padding:2px;background:#fff
+}
+.rich-swatch{
+  width:27px!important;min-width:27px!important;height:27px!important;padding:0!important;
+  border-radius:999px!important;position:relative
+}
+.rich-swatch:after{
+  content:"";position:absolute;inset:3px;border-radius:999px;background:var(--swatch)
+}
+.rich-editor{
+  width:100%;border:1px solid var(--line);border-radius:9px;background:#fff;
+  padding:9px 10px;outline:none;color:var(--text);line-height:1.5;
+  min-height:42px;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;
+  cursor:text
+}
+.rich-editor.tall{min-height:105px}
+.rich-editor.medium{min-height:67px}
+.rich-editor:focus{border-color:#8db1d2;box-shadow:0 0 0 3px rgba(14,74,132,.08)}
+.rich-editor:empty:before{
+  content:attr(data-placeholder);color:#9aa5af;pointer-events:none
+}
+.rich-editor strong{font-weight:800}
+.rich-editor span[style*="color"]{text-decoration:none}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#eef2f5;border-radius:10px}
 .segment button{border:0;border-radius:7px;background:transparent;padding:9px;color:#596674;font-size:12px}
@@ -294,7 +336,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <aside class="sidebar">
   <div class="header">
     <h1>안내문 제작기</h1>
-    <span class="badge">V1.5.1</span>
+    <span class="badge">V1.6</span>
   </div>
   <p class="desc">
     GitHub 루트의 chars / logos / templates 구조를 그대로 사용해.
@@ -325,25 +367,51 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 
   <section class="section">
     <h2>2. 안내문 내용</h2>
+
+    <div class="rich-help">
+      <strong>부분 서식:</strong> 제목·부제목·본문·강조문·하단 문구 어디든
+      원하는 글자만 드래그한 뒤 <strong>B</strong> 또는 색상을 적용할 수 있어.
+      <strong>이탤릭·밑줄·부분 글자크기는 지원하지 않아.</strong>
+    </div>
+
+    <div class="rich-toolbar" id="richToolbar">
+      <button type="button" class="bold-btn" id="richBold" title="선택 영역 굵게">B</button>
+      <span class="toolbar-sep"></span>
+      <span class="toolbar-label">글자색</span>
+      <button type="button" class="rich-swatch" data-rich-color="#0E4A84" style="--swatch:#0E4A84" title="한양 블루"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#B18D3C" style="--swatch:#B18D3C" title="골드"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#C62828" style="--swatch:#C62828" title="레드"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#111111" style="--swatch:#111111" title="블랙"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#FFFFFF" style="--swatch:#FFFFFF" title="화이트"></button>
+      <input type="color" id="richColor" value="#0E4A84" title="직접 색상 선택">
+      <span class="toolbar-sep"></span>
+      <button type="button" id="richClear">서식 제거</button>
+    </div>
+
     <div class="field">
       <label><strong>제목</strong></label>
-      <textarea id="title" rows="2">안내문 제목을 입력하세요</textarea>
+      <div id="title" class="rich-editor medium" contenteditable="true"
+           data-rich-key="title" data-placeholder="안내문 제목을 입력하세요"></div>
     </div>
     <div class="field">
       <label><strong>부제목</strong><span>선택</span></label>
-      <input type="text" id="subtitle" placeholder="필요한 경우만 입력">
+      <div id="subtitle" class="rich-editor" contenteditable="true"
+           data-rich-key="subtitle" data-placeholder="필요한 경우만 입력"></div>
     </div>
     <div class="field">
       <label><strong>본문</strong></label>
-      <textarea id="body" rows="6"></textarea>
+      <div id="body" class="rich-editor tall" contenteditable="true"
+           data-rich-key="body" data-placeholder="안내 내용을 입력하세요"></div>
     </div>
     <div class="field">
       <label><strong>강조문</strong><span>선택</span></label>
-      <textarea id="emphasis" rows="2"></textarea>
+      <div id="emphasis" class="rich-editor medium" contenteditable="true"
+           data-rich-key="emphasis" data-placeholder="강조할 문구가 있으면 입력"></div>
     </div>
     <div class="field">
       <label><strong>하단 문구</strong><span>선택</span></label>
-      <textarea id="footer" rows="2" placeholder="예: 문의 | 대외협력팀 031-000-0000"></textarea>
+      <div id="footer" class="rich-editor medium" contenteditable="true"
+           data-rich-key="footer" data-placeholder="예: 문의 | 대외협력팀 031-000-0000"></div>
     </div>
   </section>
 
@@ -602,9 +670,15 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     <section class="patch-panel" id="patchPanel">
       <div class="patch-head">
         <strong>안내문 제작기 업데이트</strong>
-        <span class="patch-current">V1.5.1 · 2026.08.26</span>
+        <span class="patch-current">V1.6 · 2026.08.27</span>
       </div>
       <ul>
+        <li>제목·부제목·본문·강조문·하단 문구의 특정 글자만 굵게 표시하는 부분 볼드 기능 추가</li>
+        <li>선택한 글자만 개별 색상을 적용하는 부분 글자색 기능 추가</li>
+        <li>한양 블루·골드·레드·블랙·화이트 빠른 색상 및 직접 색상 선택 지원</li>
+        <li>서식 제거 기능 추가</li>
+        <li>외부 문서 복붙 시 볼드·색상·줄바꿈 외 서식을 자동 제거하도록 입력 정리 강화</li>
+        <li>이탤릭·밑줄·부분 글자크기는 의도적으로 지원하지 않음</li>
         <li>안내문 제작기에서 웰컴보드 편집 기능을 완전히 분리</li>
         <li>기존 웰컴보드 브라운·블랙 2칸을 ‘웰컴보드 제작기’ 바로가기 카드 1개로 통합</li>
         <li>바로가기 클릭 시 별도 웰컴보드 제작기로 이동</li>
@@ -719,7 +793,7 @@ const freshState=()=>({
 
   title:"안내문 제목을 입력하세요",
   subtitle:"",
-  body:"안내 내용을 입력하세요.\n\n필요한 내용을 보기 좋게 줄바꿈해서 사용할 수 있습니다.",
+  body:"안내 내용을 입력하세요.<br><br>필요한 내용을 보기 좋게 줄바꿈해서 사용할 수 있습니다.",
   emphasis:"",
   footer:"",
 
@@ -779,6 +853,205 @@ const imgs={
   photo:$("photoImg")
 };
 
+const RICH_KEYS=["title","subtitle","body","emphasis","footer"];
+let activeRichEditor=null;
+let savedRichRange=null;
+
+function escapeHtml(value){
+  return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+function normalizeColor(value){
+  const v=String(value||"").trim();
+  if(/^#[0-9a-fA-F]{6}$/.test(v))return v.toUpperCase();
+  if(/^#[0-9a-fA-F]{3}$/.test(v)){
+    return ("#"+v.slice(1).split("").map(x=>x+x).join("")).toUpperCase();
+  }
+  const m=v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if(m){
+    const hex=[m[1],m[2],m[3]].map(n=>
+      Math.max(0,Math.min(255,Number(n))).toString(16).padStart(2,"0")
+    ).join("");
+    return "#"+hex.toUpperCase();
+  }
+  return "";
+}
+
+function sanitizeRichHtml(html){
+  const box=document.createElement("div");
+  box.innerHTML=String(html||"");
+
+  function walk(node){
+    if(node.nodeType===Node.TEXT_NODE)return escapeHtml(node.nodeValue);
+    if(node.nodeType!==Node.ELEMENT_NODE)return "";
+
+    const tag=node.tagName.toUpperCase();
+    const inner=[...node.childNodes].map(walk).join("");
+
+    if(tag==="BR")return "<br>";
+    if(tag==="B"||tag==="STRONG")return `<strong>${inner}</strong>`;
+
+    if(tag==="FONT"||tag==="SPAN"){
+      const color=normalizeColor(
+        tag==="FONT" ? node.getAttribute("color") : node.style.color
+      );
+      return color ? `<span style="color:${color}">${inner}</span>` : inner;
+    }
+
+    // contenteditable에서 Enter 시 생길 수 있는 블록 태그는 줄바꿈으로만 보존
+    if(["DIV","P","LI"].includes(tag)){
+      return inner+"<br>";
+    }
+
+    // 이탤릭, 밑줄, 링크, 임의 스타일 등은 태그만 제거
+    return inner;
+  }
+
+  let result=[...box.childNodes].map(walk).join("");
+  result=result
+    .replace(/(<br>){3,}/g,"<br><br>")
+    .replace(/^(<br>)+|(<br>)+$/g,"");
+
+  return result;
+}
+
+function richPlainText(html){
+  const box=document.createElement("div");
+  box.innerHTML=sanitizeRichHtml(html);
+  return (box.innerText||box.textContent||"").replace(/\u00A0/g," ");
+}
+
+function migrateRichValue(value){
+  const raw=String(value??"");
+  // 이전 버전의 순수 텍스트 저장값은 안전하게 HTML로 변환
+  if(!/<\s*(strong|b|span|font|br|div|p)\b/i.test(raw)){
+    return escapeHtml(raw).replace(/\r?\n/g,"<br>");
+  }
+  return sanitizeRichHtml(raw);
+}
+
+function migrateRichState(target){
+  for(const key of RICH_KEYS){
+    target[key]=migrateRichValue(target[key]);
+  }
+  return target;
+}
+
+function editorFromNode(node){
+  const el=node?.nodeType===Node.ELEMENT_NODE?node:node?.parentElement;
+  return el?.closest?.(".rich-editor")||null;
+}
+
+function rememberRichSelection(){
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return;
+  const editor=editorFromNode(sel.anchorNode);
+  if(!editor)return;
+  activeRichEditor=editor;
+  savedRichRange=sel.getRangeAt(0).cloneRange();
+}
+
+function restoreRichSelection(requireText=true){
+  if(!activeRichEditor||!savedRichRange){
+    alert("서식을 적용할 글자를 먼저 드래그해줘.");
+    return false;
+  }
+  const sel=window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(savedRichRange);
+  if(requireText && sel.getRangeAt(0).collapsed){
+    alert("서식을 적용할 글자를 먼저 드래그해줘.");
+    return false;
+  }
+  return true;
+}
+
+function syncRichEditor(editor){
+  if(!editor)return;
+  const key=editor.dataset.richKey;
+  if(!key)return;
+
+  const clean=sanitizeRichHtml(editor.innerHTML);
+  state[key]=clean;
+
+  // 입력 중 커서가 튀는 걸 막기 위해, 태그가 위험할 때만 DOM 재정리
+  if(/<(?!\/?(?:strong|span|br)\b)[^>]+>/i.test(editor.innerHTML)){
+    editor.innerHTML=clean;
+  }
+
+  renderContent();
+  requestAnimationFrame(check);
+  saveSoon();
+}
+
+function bindRichEditor(id){
+  const editor=$(id);
+
+  editor.addEventListener("focus",()=>{
+    activeRichEditor=editor;
+    rememberRichSelection();
+  });
+
+  editor.addEventListener("mouseup",rememberRichSelection);
+  editor.addEventListener("keyup",rememberRichSelection);
+
+  editor.addEventListener("keydown",e=>{
+    // 이탤릭은 지원하지 않음
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="i"){
+      e.preventDefault();
+      return;
+    }
+    // Ctrl/Cmd+B는 부분 볼드 허용
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="b"){
+      e.preventDefault();
+      rememberRichSelection();
+      applyRichBold();
+    }
+  });
+
+  editor.addEventListener("paste",e=>{
+    e.preventDefault();
+    const plain=(e.clipboardData||window.clipboardData).getData("text/plain");
+    document.execCommand("insertText",false,plain);
+    setTimeout(()=>{
+      syncRichEditor(editor);
+      rememberRichSelection();
+    },0);
+  });
+
+  editor.addEventListener("input",()=>{
+    syncRichEditor(editor);
+    rememberRichSelection();
+  });
+}
+
+function applyRichBold(){
+  if(!restoreRichSelection(true))return;
+  document.execCommand("bold",false,null);
+  syncRichEditor(activeRichEditor);
+  rememberRichSelection();
+}
+
+function applyRichColor(color){
+  const clean=normalizeColor(color);
+  if(!clean)return;
+  if(!restoreRichSelection(true))return;
+  document.execCommand("foreColor",false,clean);
+  syncRichEditor(activeRichEditor);
+  rememberRichSelection();
+}
+
+function clearRichFormat(){
+  if(!restoreRichSelection(true))return;
+  document.execCommand("removeFormat",false,null);
+  syncRichEditor(activeRichEditor);
+  rememberRichSelection();
+}
+
 function fontFamily(v){
   if(v==="SUIT") return '"SUIT Variable",SUIT,sans-serif';
   if(v==="Noto Sans KR") return '"Noto Sans KR",sans-serif';
@@ -815,19 +1088,19 @@ function saveSoon(){
     try{
       const copy=deepCopy(state);
       copy.photoData="";
-      localStorage.setItem("noticeMakerV14",JSON.stringify(copy));
+      localStorage.setItem("noticeMakerV16",JSON.stringify(copy));
     }catch(e){}
   },160);
 }
 
 function loadSaved(){
   try{
-    const savedRaw=localStorage.getItem("noticeMakerV14")||localStorage.getItem("noticeMakerV13")||"null";
+    const savedRaw=localStorage.getItem("noticeMakerV16")||localStorage.getItem("noticeMakerV14")||localStorage.getItem("noticeMakerV13")||"null";
     const x=JSON.parse(savedRaw);
     if(!x)return;
 
     const b=freshState();
-    state={...b,...x};
+    state=migrateRichState({...b,...x});
 
     const baseObjects=deepCopy(OBJ_DEFAULTS[state.orientation]||OBJ_DEFAULTS.landscape);
     state.objects={...baseObjects,...(x.objects||{})};
@@ -1089,11 +1362,11 @@ function renderTemplate(){
 }
 
 function renderContent(){
-  $("pTitle").textContent=state.title;
-  $("pSubtitle").textContent=state.subtitle;
-  $("pBody").textContent=state.body;
-  $("pEmphasis").textContent=state.emphasis;
-  $("pFooter").textContent=state.footer;
+  $("pTitle").innerHTML=sanitizeRichHtml(state.title);
+  $("pSubtitle").innerHTML=sanitizeRichHtml(state.subtitle);
+  $("pBody").innerHTML=sanitizeRichHtml(state.body);
+  $("pEmphasis").innerHTML=sanitizeRichHtml(state.emphasis);
+  $("pFooter").innerHTML=sanitizeRichHtml(state.footer);
 
   $("content").style.fontFamily=fontFamily(state.font);
 
@@ -1344,11 +1617,11 @@ function presetLogoPosition(key){
 }
 
 function renderUI(){
-  $("title").value=state.title;
-  $("subtitle").value=state.subtitle;
-  $("body").value=state.body;
-  $("emphasis").value=state.emphasis;
-  $("footer").value=state.footer;
+  for(const key of RICH_KEYS){
+    const editor=$(key);
+    const clean=sanitizeRichHtml(state[key]);
+    if(editor.innerHTML!==clean)editor.innerHTML=clean;
+  }
 
   $("font").value=state.font;
   $("titleAlign").value=state.titleAlign;
@@ -1516,7 +1789,7 @@ function mergeImportedState(incoming){
   if(!x||typeof x!=="object")throw new Error("invalid state");
 
   const orientation=x.orientation in PAGE?x.orientation:b.orientation;
-  const merged={...b,...x,orientation};
+  const merged=migrateRichState({...b,...x,orientation});
   const baseObjects=deepCopy(OBJ_DEFAULTS[orientation]);
   merged.objects={...baseObjects,...(x.objects||{})};
   for(const k of Object.keys(baseObjects)){
@@ -1530,7 +1803,7 @@ function mergeImportedState(incoming){
 function exportWorkFile(){
   const payload={
     app:"notice-maker",
-    version:"1.4",
+    version:"1.6",
     savedAt:new Date().toISOString(),
     state:state
   };
@@ -1658,11 +1931,29 @@ document.querySelectorAll("[data-o]").forEach(b=>{
   };
 });
 
-bindText("title","title");
-bindText("subtitle","subtitle");
-bindText("body","body");
-bindText("emphasis","emphasis");
-bindText("footer","footer");
+RICH_KEYS.forEach(bindRichEditor);
+
+document.addEventListener("selectionchange",()=>{
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return;
+  const editor=editorFromNode(sel.anchorNode);
+  if(editor)rememberRichSelection();
+});
+
+// 툴바를 누를 때 선택영역이 사라지지 않도록 함
+document.querySelectorAll("#richToolbar button").forEach(btn=>{
+  btn.addEventListener("mousedown",e=>e.preventDefault());
+});
+
+$("richBold").onclick=applyRichBold;
+$("richClear").onclick=clearRichFormat;
+
+document.querySelectorAll("[data-rich-color]").forEach(btn=>{
+  btn.onclick=()=>applyRichColor(btn.dataset.richColor);
+});
+
+$("richColor").addEventListener("mousedown",rememberRichSelection);
+$("richColor").oninput=e=>applyRichColor(e.target.value);
 
 $("font").onchange=e=>{
   state.font=e.target.value;
@@ -1902,7 +2193,7 @@ $("feedbackMail").onclick=e=>{
   e.preventDefault();
   const subject="[안내문 제작기 피드백]";
   const body=[
-    "안내문 제작기 V1.5.1 피드백입니다.",
+    "안내문 제작기 V1.6 피드백입니다.",
     "",
     "[구분]",
     "오류 / 개선 제안 / 기타",
@@ -1936,6 +2227,7 @@ $("save").onclick=()=>{
 $("reset").onclick=()=>{
   if(!confirm("안내문 설정을 전부 초기화할까?"))return;
 
+  localStorage.removeItem("noticeMakerV16");
   localStorage.removeItem("noticeMakerV14");
   state=freshState();
   $("photo").value="";
