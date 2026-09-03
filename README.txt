@@ -1,50 +1,73 @@
-안내문 제작기 V1.1
+안내문 제작기 V1.7.0 · OUTPUT SAFE · MOBILE EDIT
 
-현재 이 ZIP에는 사용자가 기존 메일명함 제작기에 쓰던 캐릭터 에셋을 그대로 포함했습니다.
+웹 브라우저에서 한양대학교 안내문을 편집하고 A4 PNG/PDF로 저장하는 정적 웹 앱입니다.
+별도 서버나 계정 없이 index.html을 열어 사용할 수 있으며, 업로드한 사진과 편집 내용은 외부로 전송되지 않습니다.
+
+주요 기능
+--------------------------------------------------
+- A4 가로/세로 안내문 편집
+- 가로 템플릿 12종, 세로 템플릿 2종
+- 제목·본문 등 부분 굵게/글자색, 위치와 서체 조정
+- 로고 4종 × 기본/흰색, 캐릭터 98종, 사용자 사진 배치
+- 텍스트 넘침과 객체 충돌 검사 및 위험한 출력 차단
+- 화면 크기와 관계없는 A4 300dpi 상당 PNG/PDF 출력
+- 모바일·태블릿 편집/미리보기 전환
+- 브라우저 자동 저장과 .notice.json 작업파일 저장/복원
+
+사용법
+--------------------------------------------------
+1. 방향과 템플릿을 선택합니다.
+2. 제목과 본문을 입력합니다.
+3. 필요하면 '고급 디자인 설정'에서 글꼴, 로고, 캐릭터, 사진과 위치를 조정합니다.
+4. 출력 영역의 레이아웃 안내를 확인한 뒤 파일명을 정하고 PNG 또는 PDF로 저장합니다.
+
+모바일·태블릿에서는 화면 아래의 '미리보기 열기'로 결과를 크게 확인할 수 있습니다.
+'편집으로 돌아가기' 또는 Escape 키를 누르면 원래 편집 위치로 돌아갑니다.
 
 폴더 구조
 --------------------------------------------------
 index.html
-assets/
-  chars/
-    hanyangi_01.png ~ hanyangi_41.png
-    college_01.png ~ college_11.png
-    hibibi_01.png ~ hibibi_24.png
-    hylion_01.png ~ hylion_17.png
-    hynari_01.png ~ hynari_05.png
+chars/
+  hanyangi_01.png ~ hanyangi_41.png
+  college_01.png ~ college_11.png
+  hibibi_01.png ~ hibibi_24.png
+  hylion_01.png ~ hylion_17.png
+  hynari_01.png ~ hynari_05.png
+logos/
+  hyu.png / hyu_white.png
+  hyu_erica.png / hyu_erica_white.png
+  hyu_round.png / hyu_round_white.png
+  hyu_lion.png / hyu_lion_white.png
+templates/
+  landscape/template_01.png ~ template_12.png
+  portrait/template_01.png ~ template_02.png
 
-  logos/
-    hyu.png
-    hyu_erica.png
-    hyu_round.png        <- 직접 추가
-    hyu_lion.png         <- 직접 추가
+참고: templates/landscape/template_13.png과 template_14.png은 기존 웰컴보드용 자산입니다.
+파일은 보존하지만 안내문 템플릿 목록에서는 의도적으로 불러오지 않습니다.
+가로 목록 끝의 카드는 별도 웰컴보드 제작기로 연결됩니다.
 
-  templates/
-    landscape/
-      template_01.png ~ template_08.png
-    portrait/
-      template_01.png ~ template_08.png
-
-템플릿 넣는 법
+템플릿 추가 방법
 --------------------------------------------------
-가로형 템플릿:
-assets/templates/landscape/
+1. A4 방향에 맞는 PNG 파일을 templates/landscape 또는 templates/portrait에 넣습니다.
+2. template_13.png처럼 기존 번호 다음의 두 자리 파일명을 사용합니다.
+3. index.html의 TEMPLATES에서 해당 방향 배열에 id, name, text, accent, logoColor 항목을 추가합니다.
 
-세로형 템플릿:
-assets/templates/portrait/
+템플릿 목록과 화면의 개수·파일 범위 안내는 TEMPLATES 데이터에서 자동으로 계산됩니다.
+가로 template_13.png과 template_14.png은 위의 미사용 웰컴보드 자산이므로 새 안내문 템플릿 번호로 재사용하지 마세요.
 
-파일명은 반드시 다음 규칙으로 맞추면 됩니다.
-template_01.png
-template_02.png
-...
-template_08.png
-
-현재 사용자가 이 대화에서 제공한 가로형 템플릿 8개는
-이미 landscape 폴더에 넣어둔 상태입니다.
-
-주의
+출력과 개인정보
 --------------------------------------------------
-현재 제공받은 가로 템플릿 원본 비율이 A4 가로 비율과 아주 조금 다르기 때문에,
-사이트에서는 A4 출력 크기에 맞춰 약간 늘려 표시합니다.
+PNG와 PDF는 미리보기 확대/축소나 브라우저 폭과 무관하게 고정 A4 크기를 기준으로 생성됩니다.
+PDF는 A4 한 페이지에 동일한 고해상도 이미지를 배치합니다.
 
-GitHub Pages에서는 이 폴더 구조를 그대로 업로드하면 됩니다.
+사진은 현재 브라우저 탭에서만 처리되며 자동 저장 대상에서도 제외됩니다.
+브라우저 저장값은 이 기기의 localStorage에만 보관됩니다. '전체 초기화'는 V1.3 이후의 안내문 제작기 저장값을 모두 삭제합니다.
+
+외부 라이브러리
+--------------------------------------------------
+- html2canvas: PNG 렌더링
+- jsPDF: PDF 생성
+- Google Fonts / jsDelivr: 웹 글꼴과 라이브러리 로드
+
+따라서 최초 사용과 웹 글꼴·출력 라이브러리 로드에는 인터넷 연결이 필요할 수 있습니다.
+GitHub Pages에는 이 저장소의 루트 구조를 그대로 배포하면 됩니다.

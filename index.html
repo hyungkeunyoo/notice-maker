@@ -45,6 +45,7 @@ button:disabled,input:disabled{cursor:not-allowed;opacity:.48}
 .header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .header h1{margin:0;font-size:24px;letter-spacing:-.04em}
 .badge{font-size:11px;padding:5px 9px;border-radius:999px;background:#edf3f8;color:#45647e}
+.release-label{font-size:10.5px;font-weight:800;letter-spacing:.05em;color:#315f83;margin:6px 0 0}
 .desc{font-size:12.5px;line-height:1.55;color:var(--muted);margin:8px 0 15px}
 .section{padding:16px 0;border-top:1px solid #edf0f2}
 .section h2{font-size:14px;margin:0 0 11px}
@@ -221,6 +222,23 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 .danger{background:#fff1f1;color:#a43434;border:1px solid #ffd2d2}
 .asset-info{border:1px dashed #c7d1da;border-radius:9px;background:#f8fafb;padding:10px;font-size:11px;line-height:1.55;color:#5b6772}
 .asset-info code{font-family:ui-monospace,monospace;color:#245277;font-size:10px}
+.advanced-panel{border-top:1px solid #edf0f2}
+.advanced-panel>summary{
+  list-style:none;cursor:pointer;padding:16px 0;font-size:14px;font-weight:850;color:#27333e;
+  display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.advanced-panel>summary::-webkit-details-marker{display:none}
+.advanced-panel>summary:after{content:"펼치기 +";font-size:10.5px;color:#5d7182;font-weight:700}
+.advanced-panel[open]>summary:after{content:"접기 −"}
+.advanced-panel>.section{border-top:1px dashed #e2e8ed;padding-left:4px;padding-right:4px}
+.layout-warning{
+  display:none;border:1px solid #e1a8a8;background:#fff5f5;color:#7f2424;border-radius:9px;
+  padding:10px 11px;margin-bottom:10px;font-size:11px;line-height:1.55
+}
+.layout-warning.show{display:block}
+.layout-warning strong{display:block;margin-bottom:4px}
+.layout-warning ul{margin:0;padding-left:18px}
+.mobile-preview-bar{display:none}
 
 .workspace{height:100vh;min-width:0;display:flex;flex-direction:column;overflow:hidden}
 .toolbar{
@@ -230,6 +248,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 .toolbar .help{font-size:12px;color:var(--muted)}
 .status{font-size:11px;padding:5px 9px;border-radius:999px;background:#eaf6ee;color:#2d6f46;white-space:nowrap}
 .status.warn{background:#fff1d5;color:#8a6100}
+.status.error{background:#ffe4e4;color:#922f2f}
 .stage{
   flex:1;overflow:auto;display:flex;justify-content:flex-start;align-items:center;flex-direction:column;
   padding:35px 35px 60px;
@@ -355,14 +374,40 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 .guide.h{left:0;right:0;top:50%;height:1px}
 .page.dragging .guide{display:block}
 .page.exporting .guide{display:none}
+.page.export-clone{transform:none!important;box-shadow:none!important}
+
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,
+.rich-editor:focus-visible,summary:focus-visible,a:focus-visible{
+  outline:3px solid #2b8bd3;outline-offset:2px
+}
 
 @media(max-width:1050px){
   .app{grid-template-columns:355px minmax(0,1fr)}
   .sidebar{padding-left:14px;padding-right:14px}
 }
 @media(max-width:780px){
-  .app{display:block}.sidebar{position:relative;height:auto}.workspace{height:auto;min-height:85vh}
+  .app{display:block}.sidebar{position:relative;height:auto;padding-bottom:82px}.workspace{height:auto;min-height:85vh;padding-bottom:72px}
   .toolbar{position:sticky;top:0}.stage{min-height:70vh}
+  .mobile-preview-bar{
+    display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:120;
+    padding:7px;background:rgba(255,255,255,.96);border:1px solid #cad6df;border-radius:13px;
+    box-shadow:0 8px 28px rgba(26,45,61,.22)
+  }
+  .mobile-preview-bar button{
+    width:100%;min-height:44px;border:0;border-radius:9px;background:var(--blue);color:#fff;
+    font-size:13px;font-weight:850
+  }
+  .mobile-preview-bar button[hidden]{display:none}
+  body.mobile-preview-mode .sidebar{display:none}
+  body.mobile-preview-mode .workspace{display:flex;height:100vh;min-height:100vh;padding-bottom:68px}
+  body.mobile-preview-mode .stage{min-height:calc(100vh - 54px);padding:24px 18px 50px}
+  .segment button,.template-btn,.rich-toolbar button,.text-position-tools button,
+  .logo-presets button,.char-thumb,.object-tabs button,.tiny button,.btn,
+  .feedback-actions a,.feedback-actions button,input[type=text],select,.control{min-height:44px}
+  input[type=range]{min-height:44px}
+  input[type=color],.rich-toolbar input[type=color]{width:44px;height:44px}
+  .touch-label{min-height:44px}
+  summary{min-height:44px;display:flex;align-items:center}
 }
 </style>
 </head>
@@ -372,8 +417,9 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 <aside class="sidebar">
   <div class="header">
     <h1>안내문 제작기</h1>
-    <span class="badge">V1.6.1</span>
+    <span class="badge" id="versionBadge">V1.7.0</span>
   </div>
+  <div class="release-label">OUTPUT SAFE · MOBILE EDIT</div>
   <p class="desc">
     GitHub 루트의 chars / logos / templates 구조를 그대로 사용해.
     A4 인쇄용 안내문 전용 제작기. 웰컴보드는 별도 제작기로 분리했고,
@@ -386,18 +432,18 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     <div class="field">
       <label><strong>용지 방향</strong></label>
       <div class="segment">
-        <button type="button" data-o="landscape" class="active">가로형</button>
-        <button type="button" data-o="portrait">세로형</button>
+        <button type="button" data-o="landscape" class="active" aria-pressed="true">가로형</button>
+        <button type="button" data-o="portrait" aria-pressed="false">세로형</button>
       </div>
     </div>
 
     <div class="field">
-      <label><strong>템플릿</strong><span id="templateCount">가로 12종 + 웰컴보드</span></label>
+      <label><strong>템플릿</strong><span id="templateCount"></span></label>
       <div class="template-grid" id="templates"></div>
     </div>
 
     <div class="field">
-      <label><strong>안전영역 표시</strong><input type="checkbox" id="safeCheck"></label>
+      <label class="touch-label"><strong>안전영역 표시</strong><input type="checkbox" id="safeCheck" aria-label="안전영역 표시"></label>
     </div>
   </section>
 
@@ -411,15 +457,15 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
 
     <div class="rich-toolbar" id="richToolbar">
-      <button type="button" class="bold-btn" id="richBold" title="선택 영역 굵게">B</button>
+      <button type="button" class="bold-btn" id="richBold" title="선택 영역 굵게" aria-label="선택 영역 굵게">B</button>
       <span class="toolbar-sep"></span>
       <span class="toolbar-label">글자색</span>
-      <button type="button" class="rich-swatch" data-rich-color="#0E4A84" style="--swatch:#0E4A84" title="한양 블루"></button>
-      <button type="button" class="rich-swatch" data-rich-color="#B18D3C" style="--swatch:#B18D3C" title="골드"></button>
-      <button type="button" class="rich-swatch" data-rich-color="#C62828" style="--swatch:#C62828" title="레드"></button>
-      <button type="button" class="rich-swatch" data-rich-color="#111111" style="--swatch:#111111" title="블랙"></button>
-      <button type="button" class="rich-swatch" data-rich-color="#FFFFFF" style="--swatch:#FFFFFF" title="화이트"></button>
-      <input type="color" id="richColor" value="#0E4A84" title="직접 색상 선택">
+      <button type="button" class="rich-swatch" data-rich-color="#0E4A84" style="--swatch:#0E4A84" title="한양 블루" aria-label="선택 영역 한양 블루"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#B18D3C" style="--swatch:#B18D3C" title="골드" aria-label="선택 영역 골드"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#C62828" style="--swatch:#C62828" title="레드" aria-label="선택 영역 레드"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#111111" style="--swatch:#111111" title="블랙" aria-label="선택 영역 블랙"></button>
+      <button type="button" class="rich-swatch" data-rich-color="#FFFFFF" style="--swatch:#FFFFFF" title="화이트" aria-label="선택 영역 화이트"></button>
+      <input type="color" id="richColor" value="#0E4A84" title="직접 색상 선택" aria-label="선택 영역 직접 색상 선택">
       <span class="toolbar-sep"></span>
       <button type="button" id="richClear">서식 제거</button>
     </div>
@@ -430,37 +476,70 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
 
     <div class="field">
-      <label><strong>제목</strong></label>
+      <label id="titleLabel"><strong>제목</strong></label>
       <div id="title" class="rich-editor medium" contenteditable="true"
+           role="textbox" aria-labelledby="titleLabel" aria-multiline="true"
            data-rich-key="title" data-placeholder="안내문 제목을 입력하세요"></div>
     </div>
     <div class="field">
-      <label><strong>부제목</strong><span>선택</span></label>
+      <label id="subtitleLabel"><strong>부제목</strong><span>선택</span></label>
       <div id="subtitle" class="rich-editor" contenteditable="true"
+           role="textbox" aria-labelledby="subtitleLabel" aria-multiline="true"
            data-rich-key="subtitle" data-placeholder="필요한 경우만 입력"></div>
     </div>
     <div class="field">
-      <label><strong>본문</strong></label>
+      <label id="bodyLabel"><strong>본문</strong></label>
       <div id="body" class="rich-editor tall" contenteditable="true"
+           role="textbox" aria-labelledby="bodyLabel" aria-multiline="true"
            data-rich-key="body" data-placeholder="안내 내용을 입력하세요"></div>
     </div>
     <div class="field">
-      <label><strong>강조문</strong><span>선택</span></label>
+      <label id="emphasisLabel"><strong>강조문</strong><span>선택</span></label>
       <div id="emphasis" class="rich-editor medium" contenteditable="true"
+           role="textbox" aria-labelledby="emphasisLabel" aria-multiline="true"
            data-rich-key="emphasis" data-placeholder="강조할 문구가 있으면 입력"></div>
     </div>
     <div class="field">
-      <label><strong>하단 문구</strong><span>선택</span></label>
+      <label id="footerLabel"><strong>하단 문구</strong><span>선택</span></label>
       <div id="footer" class="rich-editor medium" contenteditable="true"
+           role="textbox" aria-labelledby="footerLabel" aria-multiline="true"
            data-rich-key="footer" data-placeholder="예: 문의 | 대외협력팀 031-000-0000"></div>
     </div>
   </section>
 
-  <section class="section">
-    <h2>3. 글꼴 · 내용 배치</h2>
+  <section class="section core-output" id="outputSection">
+    <h2>3. 핵심 출력</h2>
+    <p class="note">PNG와 PDF는 화면 크기와 관계없이 A4 300dpi 상당 크기로 저장돼. 작업파일은 서버가 아니라 내 컴퓨터에 JSON으로 저장돼.</p>
+
+    <div class="layout-warning" id="layoutWarning" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
     <div class="field">
-      <label><strong>글꼴</strong></label>
+      <label for="outputName"><strong>출력 파일명</strong></label>
+      <input type="text" id="outputName" value="안내문" placeholder="예: 회의실 이용 제한 안내">
+    </div>
+
+    <div class="btns">
+      <button class="btn primary" type="button" id="png">PNG 저장</button>
+      <button class="btn primary" type="button" id="pdf">PDF 저장</button>
+      <button class="btn secondary" type="button" id="workSave">작업파일 저장</button>
+      <button class="btn secondary" type="button" id="workLoad">작업파일 불러오기</button>
+    </div>
+    <input class="hidden-file" id="workFile" type="file" accept="application/json,.json,.notice" aria-label="안내문 작업파일 선택">
+
+    <div class="btns" style="margin-top:7px">
+      <button class="btn secondary" type="button" id="save">브라우저 저장</button>
+      <button class="btn danger" type="button" id="reset">전체 초기화</button>
+    </div>
+  </section>
+
+  <details class="advanced-panel" id="advancedPanel">
+    <summary>4. 고급 디자인 설정 <span class="note">기존 세부 기능 모두 포함</span></summary>
+
+  <section class="section">
+    <h2>글꼴 · 내용 배치</h2>
+
+    <div class="field">
+      <label for="font"><strong>글꼴</strong></label>
       <select id="font">
         <option value="Pretendard">Pretendard</option>
         <option value="SUIT">SUIT</option>
@@ -471,7 +550,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 
     <div class="row">
       <div class="field">
-        <label><strong>제목 정렬</strong></label>
+        <label for="titleAlign"><strong>제목 정렬</strong></label>
         <select id="titleAlign">
           <option value="left">왼쪽</option>
           <option value="center" selected>가운데</option>
@@ -479,7 +558,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
         </select>
       </div>
       <div class="field">
-        <label><strong>본문 정렬</strong></label>
+        <label for="bodyAlign"><strong>본문 정렬</strong></label>
         <select id="bodyAlign">
           <option value="left" selected>왼쪽</option>
           <option value="center">가운데</option>
@@ -488,37 +567,37 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
       </div>
     </div>
 
-    <div class="range"><span>제목 크기</span><input id="titleSize" type="range" min="30" max="92" value="56"><output id="titleSizeO">56</output></div>
-    <div class="range"><span>부제 크기</span><input id="subtitleSize" type="range" min="16" max="50" value="28"><output id="subtitleSizeO">28</output></div>
-    <div class="range"><span>본문 크기</span><input id="bodySize" type="range" min="15" max="44" value="25"><output id="bodySizeO">25</output></div>
-    <div class="range"><span>본문 행간</span><input id="bodyLine" type="range" min="120" max="210" value="162"><output id="bodyLineO">1.62</output></div>
-    <div class="range"><span>내용 위치</span><input id="contentTop" type="range" min="8" max="70" value="24"><output id="contentTopO">24%</output></div>
-    <div class="range"><span>내용 폭</span><input id="contentWidth" type="range" min="35" max="92" value="76"><output id="contentWidthO">76%</output></div>
-    <div class="range"><span>제목 미세위치</span><input id="titleShift" type="range" min="-160" max="160" value="0"><output id="titleShiftO">0px</output></div>
-    <div class="range"><span>본문 미세위치</span><input id="bodyShift" type="range" min="-160" max="160" value="0"><output id="bodyShiftO">0px</output></div>
+    <div class="range"><label for="titleSize">제목 크기</label><input id="titleSize" type="range" min="30" max="92" value="56" aria-describedby="titleSizeO"><output id="titleSizeO">56</output></div>
+    <div class="range"><label for="subtitleSize">부제 크기</label><input id="subtitleSize" type="range" min="16" max="50" value="28" aria-describedby="subtitleSizeO"><output id="subtitleSizeO">28</output></div>
+    <div class="range"><label for="bodySize">본문 크기</label><input id="bodySize" type="range" min="15" max="44" value="25" aria-describedby="bodySizeO"><output id="bodySizeO">25</output></div>
+    <div class="range"><label for="bodyLine">본문 행간</label><input id="bodyLine" type="range" min="120" max="210" value="162" aria-describedby="bodyLineO"><output id="bodyLineO">1.62</output></div>
+    <div class="range"><label for="contentTop">내용 위치</label><input id="contentTop" type="range" min="8" max="70" value="24" aria-describedby="contentTopO"><output id="contentTopO">24%</output></div>
+    <div class="range"><label for="contentWidth">내용 폭</label><input id="contentWidth" type="range" min="35" max="92" value="76" aria-describedby="contentWidthO"><output id="contentWidthO">76%</output></div>
+    <div class="range"><label for="titleShift">제목 미세위치</label><input id="titleShift" type="range" min="-160" max="160" value="0" aria-describedby="titleShiftO"><output id="titleShiftO">0px</output></div>
+    <div class="range"><label for="bodyShift">본문 미세위치</label><input id="bodyShift" type="range" min="-160" max="160" value="0" aria-describedby="bodyShiftO"><output id="bodyShiftO">0px</output></div>
 
     <div class="field" style="margin-top:11px">
-      <label><strong>글자색</strong></label>
+      <label for="textColorT"><strong>글자색</strong></label>
       <div class="color-pair">
-        <input id="textColor" type="color" value="#1f2937">
+        <input id="textColor" type="color" value="#1f2937" aria-label="글자색 선택">
         <input id="textColorT" type="text" value="#1F2937" maxlength="7">
       </div>
     </div>
 
     <div class="field">
-      <label><strong>강조색</strong></label>
+      <label for="accentT"><strong>강조색</strong></label>
       <div class="color-pair">
-        <input id="accent" type="color" value="#0e4a84">
+        <input id="accent" type="color" value="#0e4a84" aria-label="강조색 선택">
         <input id="accentT" type="text" value="#0E4A84" maxlength="7">
       </div>
     </div>
   </section>
 
   <section class="section">
-    <h2>4. 로고 · 캐릭터 · 이미지</h2>
+    <h2>로고 · 캐릭터 · 이미지</h2>
 
     <div class="field">
-      <label><strong>로고 종류</strong></label>
+      <label for="logoType"><strong>로고 종류</strong></label>
       <select id="logoType">
         <option value="none">없음</option>
         <option value="hyu">한양대학교 가로형</option>
@@ -529,7 +608,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
 
     <div class="field" id="logoColorField">
-      <label><strong>로고 색상</strong></label>
+      <label for="logoColor"><strong>로고 색상</strong></label>
       <select id="logoColor">
         <option value="default">기본색</option>
         <option value="white">흰색</option>
@@ -551,7 +630,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 
     <div class="row">
       <div class="field">
-        <label><strong>워터마크</strong></label>
+        <label for="watermarkType"><strong>워터마크</strong></label>
         <select id="watermarkType">
           <option value="none">없음</option>
           <option value="hyu_round">원형 교표</option>
@@ -559,7 +638,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
         </select>
       </div>
       <div class="field">
-        <label><strong>워터마크 색상</strong></label>
+        <label for="watermarkColor"><strong>워터마크 색상</strong></label>
         <select id="watermarkColor">
           <option value="default">기본색</option>
           <option value="white">흰색</option>
@@ -568,7 +647,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
 
     <div class="field">
-      <label><strong>캐릭터 종류</strong><span>최대 1개</span></label>
+      <label for="charCategory"><strong>캐릭터 종류</strong><span>최대 1개</span></label>
       <select id="charCategory">
         <option value="none">없음</option>
         <option value="hanyangi">하냥이</option>
@@ -585,12 +664,12 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
 
     <div class="field">
-      <label><strong>사진/이미지</strong><span>선택</span></label>
+      <label for="photo"><strong>사진/이미지</strong><span>선택</span></label>
       <input class="control" id="photo" type="file" accept="image/png,image/jpeg,image/webp">
     </div>
 
     <div class="field">
-      <label><strong>사진 맞춤</strong></label>
+      <label for="photoFit"><strong>사진 맞춤</strong></label>
       <select id="photoFit">
         <option value="original">원본 비율 유지</option>
         <option value="contain">영역 맞추기</option>
@@ -599,17 +678,17 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
 
     <div class="object-tabs" id="objTabs">
-      <button type="button" data-obj="logo" class="active">로고</button>
-      <button type="button" data-obj="watermark">워터마크</button>
-      <button type="button" data-obj="character">캐릭터</button>
-      <button type="button" data-obj="photo">사진</button>
+      <button type="button" data-obj="logo" class="active" aria-pressed="true">로고</button>
+      <button type="button" data-obj="watermark" aria-pressed="false">워터마크</button>
+      <button type="button" data-obj="character" aria-pressed="false">캐릭터</button>
+      <button type="button" data-obj="photo" aria-pressed="false">사진</button>
     </div>
 
-    <div class="range"><span>가로 위치</span><input id="objX" type="range" min="0" max="100" value="50"><output id="objXO">50%</output></div>
-    <div class="range"><span>세로 위치</span><input id="objY" type="range" min="0" max="100" value="50"><output id="objYO">50%</output></div>
-    <div class="range"><span>크기</span><input id="objSize" type="range" min="4" max="95" value="20"><output id="objSizeO">20%</output></div>
-    <div class="range"><span>투명도</span><input id="objOpacity" type="range" min="0" max="100" value="100"><output id="objOpacityO">100%</output></div>
-    <div class="range" id="rotationRow"><span>회전</span><input id="objRotate" type="range" min="-180" max="180" value="0"><output id="objRotateO">0°</output></div>
+    <div class="range"><label for="objX">가로 위치</label><input id="objX" type="range" min="0" max="100" value="50" aria-describedby="objXO"><output id="objXO">50%</output></div>
+    <div class="range"><label for="objY">세로 위치</label><input id="objY" type="range" min="0" max="100" value="50" aria-describedby="objYO"><output id="objYO">50%</output></div>
+    <div class="range"><label for="objSize">크기</label><input id="objSize" type="range" min="4" max="95" value="20" aria-describedby="objSizeO"><output id="objSizeO">20%</output></div>
+    <div class="range"><label for="objOpacity">투명도</label><input id="objOpacity" type="range" min="0" max="100" value="100" aria-describedby="objOpacityO"><output id="objOpacityO">100%</output></div>
+    <div class="range" id="rotationRow"><label for="objRotate">회전</label><input id="objRotate" type="range" min="-180" max="180" value="0" aria-describedby="objRotateO"><output id="objRotateO">0°</output></div>
 
     <div class="tiny three">
       <button type="button" id="flip">좌우 반전</button>
@@ -622,31 +701,10 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     </div>
   </section>
 
-  <section class="section">
-    <h2>5. 저장 · 불러오기</h2>
-    <p class="note">PNG는 A4 300dpi 상당 크기, PDF는 실제 A4 규격으로 저장돼. 작업파일은 서버가 아니라 내 컴퓨터에 JSON으로 저장돼.</p>
-
-    <div class="field">
-      <label><strong>출력 파일명</strong></label>
-      <input type="text" id="outputName" value="안내문" placeholder="예: 회의실 이용 제한 안내">
-    </div>
-
-    <div class="btns">
-      <button class="btn primary" type="button" id="png">PNG 저장</button>
-      <button class="btn primary" type="button" id="pdf">PDF 저장</button>
-      <button class="btn secondary" type="button" id="workSave">작업파일 저장</button>
-      <button class="btn secondary" type="button" id="workLoad">작업파일 불러오기</button>
-    </div>
-    <input class="hidden-file" id="workFile" type="file" accept="application/json,.json,.notice">
-
-    <div class="btns" style="margin-top:7px">
-      <button class="btn secondary" type="button" id="save">브라우저 저장</button>
-      <button class="btn danger" type="button" id="reset">전체 초기화</button>
-    </div>
-  </section>
+  </details>
 
   <section class="section">
-    <h2>6. 피드백</h2>
+    <h2>5. 피드백</h2>
     <p class="note">GitHub 없이 메일로만 오류나 개선 의견을 받을 수 있게 해뒀어.</p>
     <div class="feedback-actions">
       <a href="#" id="feedbackMail">✉ 피드백 메일 보내기</a>
@@ -663,8 +721,9 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
       <code>logos/hyu_lion_white.png</code><br><br>
 
       <strong>템플릿</strong><br>
-      가로 안내문: <code>templates/landscape/template_01.png ~ template_12.png</code><br>
-      세로: <code>templates/portrait/template_01.png ~ template_02.png</code>
+      가로 안내문: <code id="landscapeAssetRange"></code><br>
+      세로: <code id="portraitAssetRange"></code><br>
+      <small>template_13.png·template_14.png은 웰컴보드 분리 이전의 미사용 보관 자산이며 앱에서 로드하지 않음.</small>
     </div>
   </section>
 </aside>
@@ -674,7 +733,7 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     <div class="help">
       미리보기에서 로고·이미지뿐 아니라 제목·부제목·본문·강조문·하단 문구도 직접 끌어 이동할 수 있어.
     </div>
-    <span class="status" id="status">레이아웃 정상</span>
+    <span class="status" id="status" role="status" aria-live="polite" aria-atomic="true">레이아웃 정상</span>
   </div>
 
   <div class="stage" id="stage">
@@ -711,31 +770,20 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
     <section class="patch-panel" id="patchPanel">
       <div class="patch-head">
         <strong>안내문 제작기 업데이트</strong>
-        <span class="patch-current">V1.6.1 · 2026.08.27</span>
+        <span class="patch-current" id="patchVersion">V1.7.0 · 2026.09.03</span>
       </div>
       <ul>
-        <li>미리보기에서 제목·부제목·본문·강조문·하단 문구를 각각 직접 드래그해 위치 이동 가능</li>
-        <li>텍스트 드래그 시 페이지 밖으로 완전히 밀려나지 않도록 이동 범위 제한</li>
-        <li>가로 중앙에 가까워지면 자동 스냅되도록 개선</li>
-        <li>‘글 위치 초기화’ 버튼으로 드래그 이동값을 한 번에 원위치 가능</li>
-        <li>제목·부제목·본문·강조문·하단 문구의 특정 글자만 굵게 표시하는 부분 볼드 기능 추가</li>
-        <li>선택한 글자만 개별 색상을 적용하는 부분 글자색 기능 추가</li>
-        <li>한양 블루·골드·레드·블랙·화이트 빠른 색상 및 직접 색상 선택 지원</li>
-        <li>서식 제거 기능 추가</li>
-        <li>외부 문서 복붙 시 볼드·색상·줄바꿈 외 서식을 자동 제거하도록 입력 정리 강화</li>
-        <li>이탤릭·밑줄·부분 글자크기는 의도적으로 지원하지 않음</li>
-        <li>안내문 제작기에서 웰컴보드 편집 기능을 완전히 분리</li>
-        <li>기존 웰컴보드 브라운·블랙 2칸을 ‘웰컴보드 제작기’ 바로가기 카드 1개로 통합</li>
-        <li>바로가기 클릭 시 별도 웰컴보드 제작기로 이동</li>
-        <li>피드백 메일 전송 및 메일 주소 복사 기능 추가</li>
-        <li>PNG/PDF 출력 파일명 직접 지정 기능 추가</li>
-        <li>작업파일(JSON) 저장·불러오기 추가</li>
-        <li>제목·본문 위치를 각각 미세조정할 수 있도록 개선</li>
-        <li>사진 맞춤: 원본 비율 / 영역 맞추기 / 영역 채우기 추가</li>
-        <li>텍스트와 템플릿 배경의 대비가 낮으면 경고 표시</li>
+        <li>기기와 미리보기 크기에 관계없이 동일한 A4 300dpi 상당 PNG/PDF 출력</li>
+        <li>여러 줄 붙여넣기의 첫 줄바꿈 유실 수정</li>
+        <li>텍스트 초과·로고·캐릭터·사진 충돌을 구체적으로 표시하고 심각한 상태의 출력 차단</li>
+        <li>모바일·태블릿 편집/미리보기 전환과 Escape 닫기 지원</li>
+        <li>핵심 출력 우선 배치, 세부 기능은 고급 디자인 설정으로 정리</li>
+        <li>label·ARIA·focus-visible·모바일 터치 영역 개선</li>
+        <li>V13~V17 브라우저 저장값 마이그레이션 및 전체 초기화 보완</li>
       </ul>
       <details>
         <summary>이전 업데이트 보기</summary>
+        <div class="patch-version"><strong>V1.6.1 · 2026.08.27</strong><br>부분 굵게·색상, 텍스트 드래그, 출력 파일명, 작업파일, 대비 경고, 웰컴보드 분리.</div>
         <div class="patch-version"><strong>V1.3 · 2026.08.25</strong><br>가로 12종·세로 2종 템플릿, 흰색 로고, 로고 6개 위치 프리셋, 캐릭터 썸네일, 요소 잠금, 줄바꿈 오류 수정.</div>
         <div class="patch-version"><strong>V1.2 · 2026.08.25</strong><br>GitHub 루트의 chars / logos / templates 구조에 맞춰 에셋 경로 개편.</div>
         <div class="patch-version"><strong>V1.1 · 2026.08.25</strong><br>메일명함 제작기 캐릭터 자산 재사용 및 이미지 템플릿 방식 도입.</div>
@@ -747,10 +795,19 @@ input[type=color]{width:42px;height:34px;border:1px solid var(--line);border-rad
 </main>
 </div>
 
+<div class="mobile-preview-bar" aria-label="모바일 화면 전환">
+  <button type="button" id="openPreview">미리보기 열기</button>
+  <button type="button" id="closePreview" hidden>편집으로 돌아가기</button>
+</div>
+
 <script>
 (()=>{
 "use strict";
 
+const APP_VERSION="1.7.0";
+const STORAGE_KEY="noticeMakerV17";
+const LEGACY_STORAGE_KEYS=["noticeMakerV16","noticeMakerV14","noticeMakerV13"];
+const ALL_STORAGE_KEYS=[STORAGE_KEY,...LEGACY_STORAGE_KEYS];
 const $=id=>document.getElementById(id);
 const WELCOME_BOARD_URL="https://erakeun.github.io/welcome-board-maker/";
 
@@ -887,6 +944,8 @@ let textDrag=null;
 let topZ=20;
 let templateReady=true;
 let saveTimer=null;
+let mobileEditScrollY=0;
+let layoutFrame=null;
 
 const page=$("page");
 const stage=$("stage");
@@ -1043,6 +1102,44 @@ function syncRichEditor(editor){
   saveSoon();
 }
 
+function insertPlainTextWithBreaks(editor,text){
+  editor.focus();
+  const sel=window.getSelection();
+  if(!sel)return;
+
+  let range;
+  if(sel.rangeCount && editor.contains(sel.anchorNode)){
+    range=sel.getRangeAt(0);
+  }else{
+    range=document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+  }
+
+  range.deleteContents();
+  const fragment=document.createDocumentFragment();
+  const lines=String(text??"").replace(/\r\n?/g,"\n").split("\n");
+  let lastNode=null;
+
+  lines.forEach((line,index)=>{
+    if(index>0){
+      lastNode=document.createElement("br");
+      fragment.appendChild(lastNode);
+    }
+    if(line){
+      lastNode=document.createTextNode(line);
+      fragment.appendChild(lastNode);
+    }
+  });
+
+  if(!lastNode)return;
+  range.insertNode(fragment);
+  range.setStartAfter(lastNode);
+  range.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
 function bindRichEditor(id){
   const editor=$(id);
 
@@ -1071,11 +1168,9 @@ function bindRichEditor(id){
   editor.addEventListener("paste",e=>{
     e.preventDefault();
     const plain=(e.clipboardData||window.clipboardData).getData("text/plain");
-    document.execCommand("insertText",false,plain);
-    setTimeout(()=>{
-      syncRichEditor(editor);
-      rememberRichSelection();
-    },0);
+    insertPlainTextWithBreaks(editor,plain);
+    syncRichEditor(editor);
+    rememberRichSelection();
   });
 
   editor.addEventListener("input",()=>{
@@ -1152,6 +1247,17 @@ function currentTemplateMeta(){
   return currentTemplates().find(t=>t.id===state.template) || currentTemplates()[0];
 }
 
+function templateAssetRange(folder,count){
+  return `templates/${folder}/template_01.png ~ template_${String(count).padStart(2,"0")}.png`;
+}
+
+function updateStaticMetadata(){
+  $("versionBadge").textContent=`V${APP_VERSION}`;
+  $("patchVersion").textContent=`V${APP_VERSION} · 2026.09.03`;
+  $("landscapeAssetRange").textContent=templateAssetRange("landscape",TEMPLATES.landscape.length);
+  $("portraitAssetRange").textContent=templateAssetRange("portrait",TEMPLATES.portrait.length);
+}
+
 function templatePath(id=state.template){
   const folder=state.orientation==="landscape"?"landscape":"portrait";
   return `templates/${folder}/template_${String(id).padStart(2,"0")}.png`;
@@ -1173,14 +1279,14 @@ function saveSoon(){
     try{
       const copy=deepCopy(state);
       copy.photoData="";
-      localStorage.setItem("noticeMakerV16",JSON.stringify(copy));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(copy));
     }catch(e){}
   },160);
 }
 
 function loadSaved(){
   try{
-    const savedRaw=localStorage.getItem("noticeMakerV16")||localStorage.getItem("noticeMakerV14")||localStorage.getItem("noticeMakerV13")||"null";
+    const savedRaw=ALL_STORAGE_KEYS.map(key=>localStorage.getItem(key)).find(Boolean)||"null";
     const x=JSON.parse(savedRaw);
     if(!x)return;
 
@@ -1205,12 +1311,15 @@ function buildTemplateButtons(){
   const wrap=$("templates");
   const list=currentTemplates();
   wrap.innerHTML="";
-  $("templateCount").textContent=state.orientation==="landscape"?"가로 12종 + 웰컴보드":"세로 2종";
+  $("templateCount").textContent=state.orientation==="landscape"
+    ?`가로 ${list.length}종 + 웰컴보드`
+    :`세로 ${list.length}종`;
 
   for(const item of list){
     const b=document.createElement("button");
     b.type="button";
     b.className="template-btn"+(item.id===state.template?" active":"");
+    b.setAttribute("aria-pressed",String(item.id===state.template));
 
     const thumb=document.createElement("span");
     thumb.className="template-thumb";
@@ -1253,7 +1362,7 @@ function buildTemplateButtons(){
 
     const name=document.createElement("span");
     name.className="template-name";
-    name.textContent="13 · 웰컴보드 제작기 ↗";
+    name.textContent=`${TEMPLATES.landscape.length+1} · 웰컴보드 제작기 ↗`;
 
     wb.appendChild(thumb);
     wb.appendChild(badge);
@@ -1285,6 +1394,7 @@ function buildCharGrid(){
     const b=document.createElement("button");
     b.type="button";
     b.className="char-thumb"+(i===state.charIndex?" active":"");
+    b.setAttribute("aria-pressed",String(i===state.charIndex));
 
     const img=document.createElement("img");
     img.loading="lazy";
@@ -1299,7 +1409,11 @@ function buildCharGrid(){
 
     b.onclick=()=>{
       state.charIndex=i;
-      [...wrap.children].forEach((x,idx)=>x.classList.toggle("active",idx===i-1));
+      [...wrap.children].forEach((x,idx)=>{
+        const active=idx===i-1;
+        x.classList.toggle("active",active);
+        x.setAttribute("aria-pressed",String(active));
+      });
       renderAssets();
       saveSoon();
     };
@@ -1493,7 +1607,11 @@ function renderOrientation(){
   const p=PAGE[state.orientation];
   document.documentElement.style.setProperty("--page-w",p.w+"px");
   document.documentElement.style.setProperty("--page-h",p.h+"px");
-  document.querySelectorAll("[data-o]").forEach(b=>b.classList.toggle("active",b.dataset.o===state.orientation));
+  document.querySelectorAll("[data-o]").forEach(b=>{
+    const active=b.dataset.o===state.orientation;
+    b.classList.toggle("active",active);
+    b.setAttribute("aria-pressed",String(active));
+  });
 }
 
 function renderSafe(){
@@ -1522,6 +1640,7 @@ function renderObjects(){
     el.classList.toggle("selected",name===state.selected);
     el.classList.toggle("locked",!!o.locked);
   }
+  scheduleCheck();
 }
 
 function fit(){
@@ -1537,6 +1656,34 @@ function fit(){
   shell.style.width=visualW+"px";
   shell.style.height=(p.h*s)+"px";
   stageStack.style.width=visualW+"px";
+}
+
+function isCompactLayout(){
+  return window.matchMedia("(max-width: 780px)").matches;
+}
+
+function openMobilePreview(){
+  if(!isCompactLayout())return;
+  mobileEditScrollY=window.scrollY;
+  document.body.classList.add("mobile-preview-mode");
+  $("openPreview").hidden=true;
+  $("closePreview").hidden=false;
+  requestAnimationFrame(()=>{
+    fit();
+    window.scrollTo({top:0,behavior:"instant"});
+    $("closePreview").focus();
+  });
+}
+
+function closeMobilePreview(focusButton=true){
+  document.body.classList.remove("mobile-preview-mode");
+  $("openPreview").hidden=false;
+  $("closePreview").hidden=true;
+  requestAnimationFrame(()=>{
+    fit();
+    window.scrollTo({top:mobileEditScrollY,behavior:"instant"});
+    if(focusButton&&isCompactLayout())$("openPreview").focus();
+  });
 }
 
 function templateContentBackground(){
@@ -1573,30 +1720,179 @@ function hasLowContrast(){
   return contrastRatio(state.textColor,templateContentBackground())<4.5;
 }
 
-function check(){
-  const st=$("status");
-  const c=$("bodyGroup").getBoundingClientRect();
-  const p=page.getBoundingClientRect();
-  const t=$("pTitle");
-  const lh=parseFloat(getComputedStyle(t).lineHeight)||state.titleSize*1.18;
-  const titleLong=t.scrollHeight>lh*2.45;
+const TEXT_LAYOUT_TARGETS=[
+  {id:"pTitle",label:"제목",focus:"title"},
+  {id:"pSubtitle",label:"부제목",focus:"subtitle"},
+  {id:"pBody",label:"본문",focus:"body"},
+  {id:"pEmphasis",label:"강조문",focus:"emphasis"},
+  {id:"pFooter",label:"하단 문구",focus:"footer"}
+];
+
+const OBJECT_LABELS={logo:"로고",watermark:"워터마크",character:"캐릭터",photo:"사진"};
+
+function subjectLabel(label){
+  return label==="사진"?"사진이":label+"가";
+}
+
+function intersectionRatio(a,b){
+  const w=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left));
+  const h=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+  const smaller=Math.min(a.width*a.height,b.width*b.height);
+  return smaller>0?(w*h)/smaller:0;
+}
+
+function outsideDistance(rect,bounds){
+  return Math.max(
+    Math.max(0,bounds.left-rect.left),
+    Math.max(0,rect.right-bounds.right),
+    Math.max(0,bounds.top-rect.top),
+    Math.max(0,rect.bottom-bounds.bottom)
+  );
+}
+
+function collectLayoutIssues(){
+  const issues=[];
+  const bounds=page.getBoundingClientRect();
+  const scale=bounds.width/PAGE[state.orientation].w;
+  const errorTolerance=8*scale;
+  const textItems=TEXT_LAYOUT_TARGETS
+    .map(item=>({...item,el:$(item.id)}))
+    .filter(item=>item.el.textContent.trim())
+    .map(item=>({...item,rect:item.el.getBoundingClientRect()}));
+  const objectItems=Object.keys(objs)
+    .filter(isObjectVisible)
+    .map(name=>({name,label:OBJECT_LABELS[name],el:objs[name],rect:objs[name].getBoundingClientRect()}));
 
   if(!templateReady){
-    st.className="status warn";
-    st.textContent="템플릿 파일 없음";
-  }else if(hasLowContrast()){
-    st.className="status warn";
-    st.textContent="글자 대비 낮음 · 글자색 변경 권장";
-  }else if(titleLong){
-    st.className="status warn";
-    st.textContent="제목이 김 · 2줄 권장";
-  }else if(c.bottom>p.bottom-25){
-    st.className="status warn";
-    st.textContent="본문이 아래로 넘칠 수 있음";
-  }else{
-    st.className="status";
-    st.textContent="레이아웃 정상";
+    issues.push({severity:"error",message:"선택한 템플릿 파일을 불러오지 못했습니다.",focus:"templates"});
   }
+
+  for(const item of textItems){
+    const distance=outsideDistance(item.rect,bounds);
+    if(distance>0){
+      issues.push({
+        severity:distance>errorTolerance?"error":"warn",
+        message:`${item.label}이 페이지 영역을 ${Math.ceil(distance/scale)}px 벗어났습니다.`,
+        focus:item.focus
+      });
+    }
+  }
+
+  for(const item of objectItems){
+    const distance=outsideDistance(item.rect,bounds);
+    if(distance>0){
+      issues.push({
+        severity:distance>errorTolerance?"error":"warn",
+        message:`${subjectLabel(item.label)} 페이지 영역을 ${Math.ceil(distance/scale)}px 벗어났습니다.`,
+        object:item.name
+      });
+    }
+  }
+
+  for(const text of textItems){
+    for(const object of objectItems){
+      if(object.name==="watermark"&&state.objects.watermark.opacity<=.25)continue;
+      const ratio=intersectionRatio(text.rect,object.rect);
+      if(ratio>.01){
+        issues.push({
+          severity:ratio>.08?"error":"warn",
+          message:`${text.label}과 ${object.label}가 ${Math.round(ratio*100)}% 겹칩니다.`,
+          focus:text.focus,
+          object:object.name
+        });
+      }
+    }
+  }
+
+  const solidObjects=objectItems.filter(item=>item.name!=="watermark");
+  for(let i=0;i<solidObjects.length;i++){
+    for(let j=i+1;j<solidObjects.length;j++){
+      const a=solidObjects[i];
+      const b=solidObjects[j];
+      const ratio=intersectionRatio(a.rect,b.rect);
+      if(ratio>.04){
+        issues.push({
+          severity:ratio>.15?"error":"warn",
+          message:`${a.label}와 ${b.label}가 ${Math.round(ratio*100)}% 겹칩니다.`,
+          object:b.name
+        });
+      }
+    }
+  }
+
+  const title=$("pTitle");
+  const titleLine=parseFloat(getComputedStyle(title).lineHeight)||state.titleSize*1.18;
+  if(title.textContent.trim()&&title.scrollHeight>titleLine*2.45){
+    issues.push({severity:"warn",message:"제목이 3줄 이상입니다. 2줄 이내를 권장합니다.",focus:"title"});
+  }
+  if(hasLowContrast()){
+    issues.push({severity:"warn",message:"배경과 글자 대비가 낮습니다. 글자색 변경을 권장합니다.",focus:"textColor"});
+  }
+  return issues;
+}
+
+function renderLayoutIssues(issues){
+  const st=$("status");
+  const warning=$("layoutWarning");
+  const firstError=issues.find(issue=>issue.severity==="error");
+  const firstIssue=firstError||issues[0];
+
+  st.className="status"+(firstError?" error":firstIssue?" warn":"");
+  st.textContent=firstIssue
+    ?`${firstError?"출력 불가":"확인 필요"} · ${firstIssue.message}`
+    :"레이아웃 정상";
+
+  warning.replaceChildren();
+  warning.classList.toggle("show",issues.length>0);
+  if(!issues.length)return;
+
+  const strong=document.createElement("strong");
+  strong.textContent=firstError?"출력 전 수정이 필요합니다.":"레이아웃 확인 권장";
+  const list=document.createElement("ul");
+  for(const issue of issues.slice(0,5)){
+    const li=document.createElement("li");
+    li.textContent=issue.message;
+    list.appendChild(li);
+  }
+  if(issues.length>5){
+    const li=document.createElement("li");
+    li.textContent=`그 외 ${issues.length-5}건`;
+    list.appendChild(li);
+  }
+  warning.append(strong,list);
+}
+
+function check(){
+  const issues=collectLayoutIssues();
+  renderLayoutIssues(issues);
+  return issues;
+}
+
+function scheduleCheck(){
+  cancelAnimationFrame(layoutFrame);
+  layoutFrame=requestAnimationFrame(check);
+}
+
+function focusLayoutIssue(issue){
+  if(document.body.classList.contains("mobile-preview-mode"))closeMobilePreview(false);
+  const advanced=$("advancedPanel");
+  if(issue.object||advanced.contains($(issue.focus)))advanced.open=true;
+  if(issue.object)selectObject(issue.object,false);
+  requestAnimationFrame(()=>{
+    const target=issue.object
+      ?document.querySelector(`#objTabs [data-obj="${issue.object}"]`)
+      :$(issue.focus);
+    target?.scrollIntoView({behavior:"smooth",block:"center"});
+    target?.focus({preventScroll:true});
+  });
+}
+
+function ensureSafeToExport(){
+  const errors=check().filter(issue=>issue.severity==="error");
+  if(!errors.length)return true;
+  alert("출력할 수 없는 레이아웃 문제가 있습니다.\n\n"+errors.slice(0,5).map(issue=>"• "+issue.message).join("\n"));
+  focusLayoutIssue(errors[0]);
+  return false;
 }
 
 function clamp(v,min,max){
@@ -1647,9 +1943,11 @@ function selectObject(name,save=true){
   state.selected=name;
   renderObjects();
 
-  document.querySelectorAll("#objTabs [data-obj]").forEach(
-    b=>b.classList.toggle("active",b.dataset.obj===name)
-  );
+  document.querySelectorAll("#objTabs [data-obj]").forEach(b=>{
+    const active=b.dataset.obj===name;
+    b.classList.toggle("active",active);
+    b.setAttribute("aria-pressed",String(active));
+  });
 
   updateObjectControls();
   if(save)saveSoon();
@@ -1990,7 +2288,7 @@ function mergeImportedState(incoming){
 function exportWorkFile(){
   const payload={
     app:"notice-maker",
-    version:"1.6.1",
+    version:APP_VERSION,
     savedAt:new Date().toISOString(),
     state:state
   };
@@ -2019,6 +2317,8 @@ function importWorkFile(file){
 }
 
 async function makeCanvas(){
+  if(!ensureSafeToExport())return null;
+
   if(!templateReady){
     alert("선택한 템플릿 이미지가 아직 없어.");
     return null;
@@ -2027,19 +2327,48 @@ async function makeCanvas(){
   if(assetMissing())return null;
 
   await document.fonts.ready;
-  page.classList.add("exporting");
+  const dimensions=PAGE[state.orientation];
+  const clone=page.cloneNode(true);
+  clone.removeAttribute("id");
+  clone.querySelectorAll("[id]").forEach(el=>el.removeAttribute("id"));
+  clone.classList.add("exporting","export-clone");
+  clone.classList.remove("dragging");
+  Object.assign(clone.style,{
+    position:"fixed",
+    left:"0",
+    top:"0",
+    width:dimensions.w+"px",
+    height:dimensions.h+"px",
+    transform:"none",
+    zIndex:"-2147483647",
+    pointerEvents:"none"
+  });
+  document.body.appendChild(clone);
 
   try{
-    return await html2canvas(page,{
+    await Promise.all([...clone.querySelectorAll("img")].map(img=>{
+      if(img.complete)return Promise.resolve();
+      return new Promise(resolve=>{
+        img.addEventListener("load",resolve,{once:true});
+        img.addEventListener("error",resolve,{once:true});
+      });
+    }));
+    return await html2canvas(clone,{
       scale:300/96,
       useCORS:true,
       allowTaint:false,
       backgroundColor:"#ffffff",
       logging:false,
-      imageTimeout:8000
+      imageTimeout:8000,
+      width:dimensions.w,
+      height:dimensions.h,
+      windowWidth:dimensions.w,
+      windowHeight:dimensions.h,
+      scrollX:0,
+      scrollY:0
     });
   }finally{
-    page.classList.remove("exporting");
+    clone.remove();
   }
 }
 
@@ -2386,13 +2715,22 @@ $("pdf").onclick=exportPDF;
 $("workSave").onclick=exportWorkFile;
 $("workLoad").onclick=()=>$("workFile").click();
 $("workFile").onchange=e=>importWorkFile(e.target.files?.[0]);
+$("openPreview").onclick=openMobilePreview;
+$("closePreview").onclick=()=>closeMobilePreview();
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&document.body.classList.contains("mobile-preview-mode")){
+    e.preventDefault();
+    closeMobilePreview();
+  }
+});
 
 const FEEDBACK_EMAIL="keun0810@hanyang.ac.kr";
 $("feedbackMail").onclick=e=>{
   e.preventDefault();
   const subject="[안내문 제작기 피드백]";
   const body=[
-    "안내문 제작기 V1.6.1 피드백입니다.",
+    `안내문 제작기 V${APP_VERSION} 피드백입니다.`,
     "",
     "[구분]",
     "오류 / 개선 제안 / 기타",
@@ -2426,16 +2764,22 @@ $("save").onclick=()=>{
 $("reset").onclick=()=>{
   if(!confirm("안내문 설정을 전부 초기화할까?"))return;
 
-  localStorage.removeItem("noticeMakerV16");
-  localStorage.removeItem("noticeMakerV14");
+  ALL_STORAGE_KEYS.forEach(key=>localStorage.removeItem(key));
   state=freshState();
   $("photo").value="";
   render(true);
 };
 
-window.addEventListener("resize",fit);
+window.addEventListener("resize",()=>{
+  if(!isCompactLayout()&&document.body.classList.contains("mobile-preview-mode")){
+    closeMobilePreview(false);
+  }else{
+    fit();
+  }
+});
 
 /* 시작 */
+updateStaticMetadata();
 loadSaved();
 render(true);
 
